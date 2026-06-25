@@ -41,9 +41,16 @@ This document tracks what is implemented locally, what official Claude Life Scie
 | Reference file validation | Yes — `tools/reference_validator.py` | None | None | Cannot detect chromosome naming conflicts or missing indexes before analysis |
 | Report assembly | Yes — `tools/report_builder.py` | None | None | Manual assembly required if tool unavailable |
 | Biological interpretation | Enforced in all agents/skills | `pubmed@life-sciences` (for context) | None | Without biological interpretation, QC thresholds are applied blind |
-| Full RNA-seq alignment + quantification | **Not implemented** | `nextflow-development@life-sciences` (nf-core/rnaseq) | `STAR`, `HISAT2`, `Salmon`, `RSEM` | Cannot produce gene-level expression counts from raw FASTQ |
-| Full WGS/WES pipeline | **Not implemented** | `nextflow-development@life-sciences` (nf-core/sarek) | Full GATK4 stack | Cannot call variants reproducibly from raw FASTQ |
-| Full ATAC-seq pipeline | **Not implemented** | `nextflow-development@life-sciences` (nf-core/atacseq) | `Trim Galore`, `BWA/Bowtie2`, `MACS3`, `deeptools` | Cannot call peaks or compute full QC from raw FASTQ |
+| Full RNA-seq alignment + quantification | **Not implemented locally** — use nf-core launcher to plan | `nextflow-development@life-sciences` (nf-core/rnaseq) | `STAR`, `HISAT2`, `Salmon`, `RSEM` | Cannot produce gene-level expression counts from raw FASTQ |
+| Full WGS/WES pipeline | **Not implemented locally** — use nf-core launcher to plan | `nextflow-development@life-sciences` (nf-core/sarek) | Full GATK4 stack | Cannot call variants reproducibly from raw FASTQ |
+| Full ATAC-seq pipeline | **Not implemented locally** — use nf-core launcher to plan | `nextflow-development@life-sciences` (nf-core/atacseq) | `Trim Galore`, `BWA/Bowtie2`, `MACS3`, `deeptools` | Cannot call peaks or compute full QC from raw FASTQ |
+| nf-core samplesheet generation (rnaseq) | **Yes (v0.3) — `tools/nfcore_launcher.py`** detects R1/R2 pairs, writes CSV with strandedness=auto, warns that strandedness must be confirmed | `nextflow-development@life-sciences` | None | Without a valid samplesheet, no nf-core pipeline can launch |
+| nf-core samplesheet generation (sarek) | **Yes (v0.3) — conservative draft** with PATIENT_ID placeholders; tumor/normal status and sex cannot be inferred from filenames | `nextflow-development@life-sciences` | None | Clinical metadata (status, patient, sex) must be added manually before execution |
+| nf-core samplesheet generation (atacseq) | **Yes (v0.3) — draft** with replicate=1 placeholders; experimental design and blacklist BED must be confirmed manually | `nextflow-development@life-sciences` | None | Wrong replicates or missing blacklist will corrupt peak calls |
+| nf-core preflight checks | **Yes (v0.3)** — checks nextflow, docker/singularity/apptainer/conda, reference file existence | `nextflow-development@life-sciences` | None | Cannot assess whether local environment is ready to run any nf-core pipeline |
+| nf-core command builder | **Yes (v0.3)** — constructs nextflow run command; writes to commands.sh | `nextflow-development@life-sciences` | None | Command will be incomplete without reference genome or samplesheet |
+| nf-core execution with provenance | **Yes (v0.3)** — `--run` executes after preflight pass; dry-run default; JSON provenance always written | `nextflow-development@life-sciences` | Nextflow | Execution cannot be attempted without Nextflow installed |
+| MultiQC output parsing | **Yes (v0.3)** — finds multiqc_report.html, multiqc_general_stats.txt, multiqc_data.json; reports what is present and what is missing | `nextflow-development@life-sciences` | None | Cannot summarize QC across samples without MultiQC output |
 
 ---
 
@@ -118,9 +125,9 @@ For every recommended filter, tools in this workspace must state:
 5. No blacklist fraction (requires bedtools)
 6. No variant annotation (requires VEP/ANNOVAR)
 7. No contamination estimation (requires VerifyBamID)
-8. No bulk RNA-seq pipeline (use nf-core/rnaseq)
-9. No full WGS pipeline (use nf-core/sarek)
-10. No full ATAC pipeline (use nf-core/atacseq)
+8. No local alignment — use `tools/nfcore_launcher.py --workflow rnaseq` to plan and `nextflow-development@life-sciences` to run
+9. No local variant calling — use `tools/nfcore_launcher.py --workflow sarek` to plan
+10. No local peak calling — use `tools/nfcore_launcher.py --workflow atacseq` to plan
 11. R-based workflows (Seurat, Signac, DESeq2, edgeR) not included
 
 ---
@@ -141,21 +148,23 @@ Claude Code orchestration
 ### ATAC-seq
 ```
 Claude Code orchestration
-  → nextflow-development@life-sciences (nf-core/atacseq for full pipeline)
-  → tools/atac_qc_local.py            (local complementary QC)
-  → deeptools                         (TSS enrichment, coverage)
-  → bedtools                          (blacklist fraction)
-  → biology-interpretation-reviewer   (biological review)
+  → tools/nfcore_launcher.py --workflow atacseq  (samplesheet + plan)
+  → nextflow-development@life-sciences           (nf-core/atacseq execution)
+  → tools/atac_qc_local.py                      (local complementary QC)
+  → deeptools                                    (TSS enrichment, coverage)
+  → bedtools                                     (blacklist fraction)
+  → biology-interpretation-reviewer              (biological review)
 ```
 
 ### WGS/WES
 ```
 Claude Code orchestration
-  → nextflow-development@life-sciences (nf-core/sarek for full pipeline)
-  → tools/wgs_vcf_qc_local.py         (local complementary QC)
-  → mosdepth                          (coverage)
-  → VEP / ANNOVAR                     (variant annotation)
-  → VerifyBamID                       (contamination)
-  → biology-interpretation-reviewer   (biological review)
+  → tools/nfcore_launcher.py --workflow sarek    (samplesheet + plan)
+  → nextflow-development@life-sciences           (nf-core/sarek execution)
+  → tools/wgs_vcf_qc_local.py                   (local complementary QC)
+  → mosdepth                                     (coverage)
+  → VEP / ANNOVAR                                (variant annotation)
+  → VerifyBamID                                  (contamination)
+  → biology-interpretation-reviewer              (biological review)
   [No clinical interpretation — ever]
 ```

@@ -29,7 +29,7 @@ A reviewer should start here, in this order:
 
 | What | Where |
 |------|-------|
-| Architecture and design rationale | [`docs/PORTFOLIO_OVERVIEW.md`](docs/PORTFOLIO_OVERVIEW.md) |
+| Architecture and design rationale | [`docs/OVERVIEW.md`](docs/OVERVIEW.md) |
 | End-to-end demo | [`examples/run_tiny_demo.sh`](examples/run_tiny_demo.sh) |
 | Pre-flight environment check | [`tools/check_environment.py`](tools/check_environment.py) |
 | WGS/VCF QC with samtools/bcftools | [`tools/wgs_vcf_qc_local.py`](tools/wgs_vcf_qc_local.py) |
@@ -92,13 +92,14 @@ env/environment.yml — Conda environment spec
 examples/           — Toy data + end-to-end demo script
 references/README.md — Reference file guidance (files not committed)
 templates/          — QC report template
-tests/              — 234 tests (fixture-based; run without external tools)
+tests/              — 279 tests (fixture-based; run without external tools)
 tools/
   check_environment.py      — Pre-flight check
   inspect_file.py           — File type detection
   scrna_qc_local.py         — scRNA-seq QC fallback (CSV/TSV)
   atac_qc_local.py          — ATAC-seq QC (v2.0: bedtools, chrom-mismatch detection)
   wgs_vcf_qc_local.py       — WGS/VCF QC (v2.0: samtools, bcftools cross-validation)
+  nfcore_launcher.py        — nf-core samplesheet builder, preflight, and safe launcher
   reference_validator.py    — Reference file validation
   report_builder.py         — Report assembly
 ```
@@ -139,7 +140,7 @@ conda install -c bioconda nextflow
 bash examples/run_tiny_demo.sh
 ```
 
-Runs all seven steps on toy data in `examples/` and writes `reports/demo/final_report.md`. See [`examples/README.md`](examples/README.md) for details.
+Runs all eight steps on toy data in `examples/` and writes `reports/demo/final_report.md`. See [`examples/README.md`](examples/README.md) for details.
 
 ---
 
@@ -186,6 +187,38 @@ python tools/scrna_qc_local.py \
 ```bash
 python tools/reference_validator.py --gtf examples/tiny.gtf --output-dir reports/ref_check
 ```
+
+---
+
+## End-to-end sequencing support
+
+`tools/nfcore_launcher.py` generates nf-core samplesheets, validates local requirements, and produces a Nextflow command without executing it by default:
+
+```bash
+# Plan only (dry-run default — no Nextflow required)
+python tools/nfcore_launcher.py \
+  --workflow rnaseq \
+  --input-dir examples \
+  --genome GRCh38 \
+  --output-dir reports/nfcore_rnaseq \
+  --dry-run
+
+# Execute (only after reviewing the plan and resolving blockers)
+python tools/nfcore_launcher.py \
+  --workflow rnaseq \
+  --input-dir /path/to/fastqs \
+  --genome GRCh38 \
+  --output-dir reports/nfcore_rnaseq \
+  --run
+```
+
+Supported workflows: `rnaseq`, `sarek`, `atacseq`.
+
+> **scRNA-seq raw FASTQ-to-count generation is not implemented in v0.3.** There is no nf-core/scrnaseq, STARsolo, or Cell Ranger integration. For scRNA-seq from raw FASTQ, use `nextflow-development@life-sciences` with nf-core/scrnaseq or run Cell Ranger/STARsolo directly. The local `scrna_qc_local.py` tool operates on count matrices only.
+
+Every plan output includes a mandatory biological caveats section. Successful pipeline completion is never presented as biological or clinical validation. For sarek, patient ID, tumor/normal status, and sex are output as explicit placeholders — they cannot be inferred from filenames and must be set manually before running.
+
+For production execution, prefer `nextflow-development@life-sciences`. The local launcher is a planning, provenance, and samplesheet layer only.
 
 ---
 
@@ -266,6 +299,7 @@ Tests run without samtools, bcftools, or bedtools. Parser tests use fixture file
 | `test_reference_validator.py` | GTF; missing file; chromosome style detected |
 | `test_report_builder.py` | All sections present; artifact table present |
 | `test_claude_config.py` | Agent configs; official-skill-first routing verified |
+| `test_nfcore_launcher.py` | Samplesheet builders; preflight; biological caveats; no-clinical-claims; no Nextflow required |
 | `test_external_tools.py` | Parser functions; degradation; biological caveats |
 
 ---

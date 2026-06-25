@@ -40,6 +40,8 @@ logs/*
 *.fastq.gz
 *.fq
 *.fq.gz
+# Allow tiny synthetic FASTQ stubs committed for testing and samplesheet demos
+!examples/*.fastq
 *.vcf.gz
 *.vcf.gz.tbi
 *.h5ad

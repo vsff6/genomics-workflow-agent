@@ -41,12 +41,13 @@ Claude Code (orchestrator)
   │
   ├── .claude/skills/           — Skill wrappers that route to agents or tools
   │
-  ├── tools/                    — Local CLI tools (fallback layer)
+  ├── tools/                    — Local CLI tools (fallback and orchestration layer)
   │     ├── check_environment.py    — Pre-flight check
   │     ├── inspect_file.py         — File type detection and routing
   │     ├── scrna_qc_local.py       — scRNA QC (CSV/TSV fallback)
   │     ├── atac_qc_local.py        — ATAC QC + bedtools integration
   │     ├── wgs_vcf_qc_local.py     — WGS/VCF QC + samtools/bcftools
+  │     ├── nfcore_launcher.py      — nf-core samplesheet builder, preflight, safe launcher
   │     ├── reference_validator.py  — Reference file validation
   │     └── report_builder.py       — Report assembly
   │
@@ -66,15 +67,18 @@ Claude Code (orchestrator)
 | samtools depth safety guard (10 MB limit without `--intervals`) | Prevents accidental slow execution on large BAM files |
 | Chromosome naming mismatch detection before any intersect | A silent zero-overlap from chr1 vs 1 style mismatch corrupts all bedtools results |
 | Official-skill-first in all agent configs | Local tools are fallbacks, not defaults; agents stop and delegate when official skills are available |
+| nf-core launcher dry-run default | `tools/nfcore_launcher.py` never executes a pipeline unless `--run` is explicit and all preflight checks pass; prevents accidental large-scale execution |
+| Sarek samplesheet placeholders | Patient ID, tumor/normal status, and sex cannot be inferred from filenames; output uses explicit `PATIENT_ID` placeholders to force human review before execution |
 
 ## What the tests demonstrate
 
-- **Parser tests**: Pure functions tested with fixture files. `tests/test_external_tools.py` contains 40 tests that run in CI without samtools, bcftools, or bedtools.
+- **Parser tests**: Pure functions tested with fixture files. `tests/test_external_tools.py` runs 40 tests in CI without samtools, bcftools, or bedtools.
 - **Degradation tests**: Tools run with no inputs; JSON output verified to contain structured skip entries.
 - **Biological caveat tests**: Every skipped metric verified to have `missing_biological_conclusion`.
 - **Clinical disclaimer test**: WGS report verified to contain no clinical claims and to include the clinical disclaimer.
-- **Config tests**: Agent and skill YAML/Markdown configs verified to contain official-skill-first routing.
+- **Config tests**: Agent and skill configs verified to contain official-skill-first routing.
+- **nf-core launcher tests**: Samplesheet builders, preflight, biological caveats, and no-clinical-claims tested without Nextflow installed.
 
 ## Test count
 
-234 tests, 0 failures. Runs on Ubuntu and Windows, Python 3.11 and 3.12.
+279 tests, 0 failures. Runs on Ubuntu and Windows, Python 3.11 and 3.12.
