@@ -1,0 +1,54 @@
+##FastQC	0.12.1
+>>Basic Statistics	pass
+#Measure	Value
+Filename	sampleC_R1.fastq.gz
+File type	Conventional base calls
+Encoding	Sanger / Illumina 1.9
+Total Sequences	50000
+Sequences flagged as poor quality	2500
+Sequence length	150
+%GC	48
+>>END_MODULE
+>>Per base sequence quality	fail
+#Base	Mean	Median	Lower Quartile	Upper Quartile	10th Percentile	90th Percentile
+1	36.0	37.0	35.0	38.0	33.0	38.0
+100	25.0	26.0	22.0	28.0	18.0	30.0
+130	18.0	19.0	14.0	22.0	10.0	24.0
+150	14.0	15.0	10.0	18.0	7.0	20.0
+>>END_MODULE
+>>Per sequence quality scores	warn
+#Quality	Count
+37	20000.0
+30	15000.0
+20	10000.0
+10	5000.0
+>>END_MODULE
+>>Per base sequence content	pass
+#Base	G	A	T	C
+1	25.0	25.0	25.0	25.0
+>>END_MODULE
+>>Per sequence GC content	pass
+#GC Content	Count
+48	15000.0
+>>END_MODULE
+>>Per base N content	pass
+#Base	N-Count
+1	0.0
+>>END_MODULE
+>>Sequence Length Distribution	pass
+#Length	Count
+150	50000.0
+>>END_MODULE
+>>Sequence Duplication Levels	pass
+#Duplication Level	Percentage of deduplicated	Percentage of total
+1	50.0	50.0
+>>END_MODULE
+>>Overrepresented sequences	warn
+#Sequence	Count	Percentage	Possible Source
+AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC	1200	2.4	TruSeq Adapter, Index 1
+>>END_MODULE
+>>Adapter Content	pass
+#Position	Illumina Universal Adapter
+1	0.0
+150	0.5
+>>END_MODULE

@@ -1,0 +1,51 @@
+##FastQC	0.12.1
+>>Basic Statistics	pass
+#Measure	Value
+Filename	sampleB_R1.fastq.gz
+File type	Conventional base calls
+Encoding	Sanger / Illumina 1.9
+Total Sequences	50000
+Sequences flagged as poor quality	0
+Sequence length	150
+%GC	48
+>>END_MODULE
+>>Per base sequence quality	pass
+#Base	Mean	Median	Lower Quartile	Upper Quartile	10th Percentile	90th Percentile
+1	36.0	37.0	35.0	38.0	33.0	38.0
+150	35.8	37.0	35.0	38.0	32.0	38.0
+>>END_MODULE
+>>Per sequence quality scores	pass
+#Quality	Count
+37	25000.0
+38	20000.0
+>>END_MODULE
+>>Per base sequence content	pass
+#Base	G	A	T	C
+1	25.0	25.0	25.0	25.0
+>>END_MODULE
+>>Per sequence GC content	pass
+#GC Content	Count
+48	15000.0
+>>END_MODULE
+>>Per base N content	pass
+#Base	N-Count
+1	0.0
+>>END_MODULE
+>>Sequence Length Distribution	pass
+#Length	Count
+150	50000.0
+>>END_MODULE
+>>Sequence Duplication Levels	pass
+#Duplication Level	Percentage of deduplicated	Percentage of total
+1	50.0	50.0
+>>END_MODULE
+>>Overrepresented sequences	pass
+#Sequence	Count	Percentage	Possible Source
+>>END_MODULE
+>>Adapter Content	warn
+#Position	Illumina Universal Adapter	Illumina Small RNA 3' Adapter	Illumina Small RNA 5' Adapter	Nextera Transposase Sequence	SOLID Small RNA Adapter
+1	0.0	0.0	0.0	0.0	0.0
+100	4.5	0.0	0.0	0.0	0.0
+130	9.8	0.0	0.0	0.0	0.0
+150	15.2	0.0	0.0	0.0	0.0
+>>END_MODULE

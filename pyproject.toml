@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "genomics-workflow-agent"
+version = "0.3.0"
+description = "Agentic genomics workflow framework for orchestrating reproducible NGS pipelines"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+readme = "README.md"
+dependencies = []
+
+[project.scripts]
+genomics-workflow-agent = "genomics_workflow_agent.cli:main"
+
+[project.optional-dependencies]
+full = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scipy>=1.11",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "h5py>=3.9",
+    "pyyaml",
+    "jsonschema",
+    "rich",
+]
+dev = [
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.setuptools.packages.find]
+include = ["genomics_workflow_agent*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

@@ -1,0 +1,10 @@
+##FastQC	0.12.1
+>>Basic Statistics	pass
+#Measure	Value
+Filename	broken.fastq.gz
+>>END_MODULE
+>>Per base sequence quality
+MISSING_STATUS_LINE
+garbage	data	here
+>>END_MODULE
+>>Adapter Content	NOTASTATUS
