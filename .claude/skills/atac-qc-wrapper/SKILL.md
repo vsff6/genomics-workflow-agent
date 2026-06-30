@@ -9,15 +9,15 @@ Wrapper for ATAC-seq and scATAC-seq QC. For full pipeline orchestration, prefers
 - Before differential accessibility, motif analysis, or footprinting.
 
 ## Official tool to prefer
-`nextflow-development@life-sciences` with `nf-core/atacseq` — for full ATAC pipeline (alignment, peak calling, QC). Use when Nextflow + Docker/Singularity are available and user needs the full pipeline.
+`nextflow-development@life-sciences` with `nf-core/atacseq` - for full ATAC pipeline (alignment, peak calling, QC). Use when Nextflow + Docker/Singularity are available and user needs the full pipeline.
 
 ## Required inputs
 - Fragments file (`.tsv.gz` for scATAC) OR BAM (for bulk ATAC)
 
 ## Optional inputs
 - Peaks BED (for FRiP)
-- GTF/GFF (for TSS enrichment — never calculate without this)
-- Blacklist BED (for blacklist fraction — never calculate without this)
+- GTF/GFF (for TSS enrichment - never calculate without this)
+- Blacklist BED (for blacklist fraction - never calculate without this)
 - Genome FASTA (for reference validation)
 - Chromosome sizes
 

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RunResult",
+  "description": "Return value of run_workflow(). Contains execution results and provenance.",
+  "type": "object",
+  "required": ["status", "workflow", "input_path", "outdir", "summary", "warnings", "errors", "paths", "provenance_paths"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "failed", "dry_run"],
+      "description": "success: all steps completed; partial: some steps failed; failed: critical failure; dry_run: execute=False"
+    },
+    "workflow": {"type": "string"},
+    "input_path": {"type": "string"},
+    "outdir": {"type": "string"},
+    "summary": {
+      "type": "object",
+      "properties": {
+        "steps": {"type": "integer"},
+        "step_results": {"type": "integer", "description": "Steps that were actually attempted"},
+        "skipped_steps": {"type": "integer"}
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "errors": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Labels of failed steps, or blocker messages"
+    },
+    "paths": {
+      "type": "object",
+      "properties": {
+        "run_report_json": {"type": "string"}
+      }
+    },
+    "provenance_paths": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Paths to per-step provenance JSON files"
+    }
+  }
+}

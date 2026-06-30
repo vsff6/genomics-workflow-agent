@@ -1,5 +1,5 @@
 """
-check_environment.py — Pre-flight environment check for the genomics-agent workspace.
+check_environment.py - Pre-flight environment check for the genomics-agent workspace.
 
 Checks:
   - Python version
@@ -38,7 +38,7 @@ REQUIRED_PACKAGES = [
     ("jsonschema", None, "JSON validation"),
 ]
 
-# Optional packages — missing = warning only
+# Optional packages - missing = warning only
 OPTIONAL_PACKAGES = [
     ("scanpy", ">=1.9", "scRNA-seq QC (local fallback); prefer single-cell-rna-qc@life-sciences"),
     ("anndata", ">=0.10", "AnnData object support for h5ad files"),
@@ -49,7 +49,7 @@ OPTIONAL_PACKAGES = [
     ("sklearn", None, "scikit-learn for downstream ML utilities"),
 ]
 
-# External CLI tools — all optional
+# External CLI tools - all optional
 EXTERNAL_TOOLS = [
     ("samtools", "BAM/CRAM manipulation and flagstat"),
     ("bcftools", "VCF stats and filtering"),
@@ -136,7 +136,7 @@ def check_external_tool(name: str, purpose: str) -> dict:
         result["status"] = "warning"
         result["path"] = None
         result["version"] = None
-        result["note"] = f"{name} not found in PATH. Optional — see README for install instructions."
+        result["note"] = f"{name} not found in PATH. Optional - see README for install instructions."
     return result
 
 
@@ -189,7 +189,7 @@ def build_markdown(python_check, required_checks, optional_checks, tool_checks, 
         "# Environment Check Report",
         f"\nGenerated: {datetime.now().isoformat()}",
         f"\n**Tool**: `{TOOL_NAME}` v{VERSION}",
-        f"\n**Python**: {python_check['version']} — {python_check['executable']}",
+        f"\n**Python**: {python_check['version']} - {python_check['executable']}",
         "",
     ]
 
@@ -206,7 +206,7 @@ def build_markdown(python_check, required_checks, optional_checks, tool_checks, 
     for c in required_checks:
         icon = status_icon(c["status"])
         ver = c.get("version", "not installed")
-        lines.append(f"- {icon} **{c['name']}** {ver or 'NOT INSTALLED'} — {c['purpose']}")
+        lines.append(f"- {icon} **{c['name']}** {ver or 'NOT INSTALLED'} - {c['purpose']}")
         if c.get("note"):
             lines.append(f"  - Note: {c['note']}")
 
@@ -214,7 +214,7 @@ def build_markdown(python_check, required_checks, optional_checks, tool_checks, 
     for c in optional_checks:
         icon = status_icon(c["status"])
         ver = c.get("version", "not installed")
-        lines.append(f"- {icon} {c['name']} {ver or 'not installed'} — {c['purpose']}")
+        lines.append(f"- {icon} {c['name']} {ver or 'not installed'} - {c['purpose']}")
         if c.get("note"):
             lines.append(f"  - Note: {c['note']}")
 
@@ -223,7 +223,7 @@ def build_markdown(python_check, required_checks, optional_checks, tool_checks, 
     for c in tool_checks:
         icon = status_icon(c["status"])
         ver = c.get("version") or "not found"
-        lines.append(f"- {icon} **{c['name']}** — {c['purpose']}")
+        lines.append(f"- {icon} **{c['name']}** - {c['purpose']}")
         if c.get("path"):
             lines.append(f"  - Path: `{c['path']}`")
             lines.append(f"  - Version: {ver}")
@@ -232,7 +232,7 @@ def build_markdown(python_check, required_checks, optional_checks, tool_checks, 
 
     lines.append("\n## Output Directory\n")
     icon = status_icon(dir_check["status"])
-    lines.append(f"- {icon} `{dir_check['path']}` — {dir_check['note']}")
+    lines.append(f"- {icon} `{dir_check['path']}` - {dir_check['note']}")
 
     lines.append("\n## Official Claude Life Sciences Skills\n")
     lines.append(f"- [{status_icon(skill_check['status'])}] {skill_check['note']}")
@@ -272,7 +272,7 @@ def main():
     log.info(f"{TOOL_NAME} v{VERSION}")
 
     python_check = check_python_version()
-    log.info(f"Python {python_check['version']} — {python_check['status']}")
+    log.info(f"Python {python_check['version']} - {python_check['status']}")
 
     required_checks = []
     for pkg, ver, purpose in REQUIRED_PACKAGES:
@@ -337,7 +337,7 @@ def main():
     if n_fail == 0:
         print("  Status: READY")
     else:
-        print(f"  Status: {n_fail} REQUIRED PACKAGES MISSING — install before running tools")
+        print(f"  Status: {n_fail} REQUIRED PACKAGES MISSING - install before running tools")
 
     return 1 if n_fail > 0 or dir_check["status"] == "FAIL" else 0
 

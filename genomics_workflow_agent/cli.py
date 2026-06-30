@@ -237,16 +237,31 @@ def _print_plan_summary(plan: dict, json_path: Path, md_path: Path) -> None:
 
 
 def cmd_agent(args: argparse.Namespace) -> int:
+    workflow = getattr(args, "workflow", "fastq-qc")
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    execute = getattr(args, "execute", False)
+
+    if workflow == "fastq-qc":
+        return _cmd_agent_fastq(args, out_dir, execute)
+    elif workflow == "variant-qc":
+        return _cmd_agent_variant(args, out_dir, execute)
+    else:
+        print(
+            f"[ERROR] Agentic decisions currently supported for fastq-qc and variant-qc only. "
+            f"Got: {workflow!r}",
+            file=sys.stderr,
+        )
+        return 1
+
+
+def _cmd_agent_fastq(args: argparse.Namespace, out_dir: Path, execute: bool) -> int:
     from genomics_workflow_agent.agent.fastq_agent import (
         run_fastq_agent,
         write_agent_report_json,
         write_agent_report_md,
     )
 
-    out_dir = Path(args.out)
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    execute = getattr(args, "execute", False)
     auto_trim = getattr(args, "auto_trim", False)
 
     if auto_trim and not execute:
@@ -255,7 +270,7 @@ def cmd_agent(args: argparse.Namespace) -> int:
 
     mode = "EXECUTE" if execute else "DRY RUN"
     trim_note = f" + AUTO-TRIM ({args.trim_tool})" if auto_trim else ""
-    print(f"\n[AGENT] FASTQ QC Agent — {mode}{trim_note}")
+    print(f"\n[AGENT] FASTQ QC Agent - {mode}{trim_note}")
     print(f"  Input : {args.input}")
     print(f"  Output: {out_dir}\n")
 
@@ -279,6 +294,43 @@ def cmd_agent(args: argparse.Namespace) -> int:
 
     json_path = write_agent_report_json(state, out_dir / "agent_report.json")
     md_path = write_agent_report_md(state, out_dir / "agent_report.md")
+    state.report_paths.extend([str(json_path), str(md_path)])
+
+    print(f"\nReports:")
+    print(f"  JSON     : {json_path}")
+    print(f"  Markdown : {md_path}")
+
+    failed_steps = [s for s in state.executed_steps if s.get("status") == "failed"]
+    return 1 if failed_steps else 0
+
+
+def _cmd_agent_variant(args: argparse.Namespace, out_dir: Path, execute: bool) -> int:
+    from genomics_workflow_agent.agent.variant_agent import (
+        run_variant_agent,
+        write_variant_agent_report_json,
+        write_variant_agent_report_md,
+    )
+
+    mode = "EXECUTE" if execute else "DRY RUN"
+    print(f"\n[AGENT] Variant QC Agent - {mode}")
+    print(f"  Input : {args.input}")
+    print(f"  Output: {out_dir}\n")
+
+    try:
+        state = run_variant_agent(
+            args.input,
+            out_dir,
+            execute=execute,
+            max_file_mb=getattr(args, "max_file_mb", 50.0),
+        )
+    except Exception as e:
+        print(f"[ERROR] Agent failed: {e}", file=sys.stderr)
+        return 1
+
+    _print_agent_summary(state)
+
+    json_path = write_variant_agent_report_json(state, out_dir / "variant_agent_report.json")
+    md_path = write_variant_agent_report_md(state, out_dir / "variant_agent_report.md")
     state.report_paths.extend([str(json_path), str(md_path)])
 
     print(f"\nReports:")
@@ -314,7 +366,7 @@ def _print_agent_summary(state) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="genomics_workflow_agent",
-        description="Agentic Genomics Workflow Framework — inspect, plan, and execute reproducible NGS pipelines.",
+        description="Agentic Genomics Workflow Framework - inspect, plan, and execute reproducible NGS pipelines.",
     )
     parser.add_argument("--version", action="version", version="%(prog)s 0.3.0")
     sub = parser.add_subparsers(dest="command", metavar="COMMAND")
@@ -350,8 +402,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--input", "-i", required=True, help="Input directory of FASTQ files")
     p.add_argument("--workflow", "-w", default="fastq-qc",
-                   choices=["fastq-qc"],
-                   help="Agentic workflow (currently fastq-qc only)")
+                   choices=["fastq-qc", "variant-qc"],
+                   help="Agentic workflow: fastq-qc or variant-qc")
     p.add_argument("--execute", action="store_true",
                    help="Execute FastQC/MultiQC. Without this, only a dry-run plan is produced.")
     p.add_argument("--auto-trim", dest="auto_trim", action="store_true",

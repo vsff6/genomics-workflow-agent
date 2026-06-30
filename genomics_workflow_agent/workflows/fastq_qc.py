@@ -12,8 +12,8 @@ OPTIONAL_TOOLS = ["fastp", "cutadapt"]
 
 BIOLOGICAL_CAVEATS = [
     "Per-base quality scores reflect library chemistry and instrument, not biology directly.",
-    "Low-quality tails are common for longer reads — trimming thresholds must match downstream tool requirements.",
-    "Adapter content depends on insert size — very short inserts are expected in some protocols (e.g. ATAC-seq).",
+    "Low-quality tails are common for longer reads - trimming thresholds must match downstream tool requirements.",
+    "Adapter content depends on insert size - very short inserts are expected in some protocols (e.g. ATAC-seq).",
     "High duplication rates may reflect library complexity, PCR amplification, or genuine biological signal.",
     "GC content outliers may indicate contamination, AT-rich organisms, or biologically meaningful regions.",
 ]
@@ -74,7 +74,7 @@ def plan(
             cmd = ["fastqc", "--outdir", fastqc_outdir, "--threads", "4",
                    str(input_dir / "*.fastq.gz")]
             expected = []
-            warnings.append("No FASTQ files detected — FastQC command uses a glob placeholder")
+            warnings.append("No FASTQ files detected - FastQC command uses a glob placeholder")
         steps.append({
             "name": "fastqc",
             "description": "Per-file FASTQ quality control",
@@ -138,7 +138,7 @@ def plan(
         "warnings": warnings,
         "biological_caveats": BIOLOGICAL_CAVEATS,
         "limitations": [
-            "FastQC does not detect all adapter types — check MultiQC adapter contamination plot.",
+            "FastQC does not detect all adapter types - check MultiQC adapter contamination plot.",
             "Trimming is not applied automatically unless --trim is passed.",
             "Trimming parameters depend on library type and downstream requirements.",
         ],
@@ -204,7 +204,7 @@ def _build_trim_steps(
 
         steps.append({
             "name": f"trim_{chosen}_{sample}",
-            "description": f"Trim adapters/{chosen} — {sample}",
+            "description": f"Trim adapters/{chosen} - {sample}",
             "command": cmd,
             "output_dir": str(trim_dir),
             "expected_outputs": expected,

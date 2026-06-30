@@ -1,7 +1,4 @@
-"""
-File inspector — detects genomic file types and returns structured JSON.
-Never loads large files into memory. Safe metadata only.
-"""
+"""Detects genomic file types and returns metadata. Never reads large files."""
 
 from __future__ import annotations
 
@@ -68,7 +65,7 @@ def _infer_assay(file_type: str, path: Path) -> str:
             return "WGS/WES (inferred from filename)"
         if "16s" in name or "its" in name or "amplicon" in name or "microbiome" in name:
             return "Amplicon/Microbiome (inferred from filename)"
-        return "unknown — check experimental records"
+        return "unknown - check experimental records"
     if file_type == "alignment":
         return "Sequencing alignment (BAM/CRAM/SAM)"
     if file_type == "vcf":
@@ -136,7 +133,7 @@ def inspect_file(path: str | Path) -> dict[str, Any]:
         result["head_lines"] = _safe_head(path)
     elif not result["safe_to_read"]:
         result["warnings"].append(
-            f"File is {result['size_mb']} MB — content not loaded. Use CLI tools for analysis."
+            f"File is {result['size_mb']} MB - content not loaded. Use CLI tools for analysis."
         )
 
     # FASTQ-specific
@@ -146,7 +143,7 @@ def inspect_file(path: str | Path) -> dict[str, Any]:
             result["fastq_encoding_guess"] = _detect_fastq_encoding(result["head_lines"])
         else:
             result["fastq_valid_header"] = False
-            result["warnings"].append("First line does not start with '@' — may not be a valid FASTQ")
+            result["warnings"].append("First line does not start with '@' - may not be a valid FASTQ")
 
     result["inferred_assay"] = _infer_assay(result["type"], path)
 
@@ -211,7 +208,7 @@ def _directory_warnings(files: list) -> list[str]:
     large = [f for f in files if f["size_mb"] > 50]
     if large:
         warnings.append(
-            f"{len(large)} file(s) exceed 50 MB — content not read. Use CLI tools for analysis."
+            f"{len(large)} file(s) exceed 50 MB - content not read. Use CLI tools for analysis."
         )
     unknown = [f for f in files if f["type"] == "unknown"]
     if unknown:

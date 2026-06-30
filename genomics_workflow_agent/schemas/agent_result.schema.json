@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentResult",
+  "description": "Return value of run_fastq_qc_agent() and run_variant_qc_agent(). Includes observations, decisions, and recommended actions.",
+  "type": "object",
+  "required": ["status", "workflow", "input_path", "outdir", "summary", "warnings", "errors", "paths", "provenance_paths", "observations", "decisions", "recommended_actions"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "failed", "dry_run"]
+    },
+    "workflow": {
+      "type": "string",
+      "enum": ["fastq-qc", "variant-qc"]
+    },
+    "input_path": {"type": "string"},
+    "outdir": {"type": "string"},
+    "summary": {
+      "type": "object",
+      "properties": {
+        "planned_steps": {"type": "integer"},
+        "executed_steps": {"type": "integer"},
+        "observations": {"type": "integer"},
+        "decisions": {"type": "integer"},
+        "recommended_actions": {"type": "integer"}
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "paths": {
+      "type": "object",
+      "properties": {
+        "agent_report_json": {"type": "string"},
+        "agent_report_md": {"type": "string"},
+        "variant_agent_report_json": {"type": "string"},
+        "variant_agent_report_md": {"type": "string"}
+      }
+    },
+    "provenance_paths": {"type": "array", "items": {"type": "string"}},
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "sample", "category", "status", "severity", "message"],
+        "properties": {
+          "source": {"type": "string"},
+          "sample": {"type": "string"},
+          "category": {"type": "string"},
+          "status": {"type": "string", "enum": ["pass", "warn", "fail", "missing", "error"]},
+          "severity": {"type": "string", "enum": ["info", "warning", "critical"]},
+          "message": {"type": "string"},
+          "evidence": {"type": "object"},
+          "suggested_action": {"type": "string"}
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "decision_type", "reason"],
+        "properties": {
+          "action": {"type": "string"},
+          "decision_type": {"type": "string", "enum": ["trim", "review", "accept", "flag", "skip"]},
+          "reason": {"type": "string"},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+          "execute_allowed": {"type": "boolean"},
+          "executed": {"type": "boolean"},
+          "safety_notes": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "priority", "reason"],
+        "properties": {
+          "action": {"type": "string"},
+          "priority": {"type": "string", "enum": ["high", "medium", "low"]},
+          "reason": {"type": "string"},
+          "command_preview": {"type": "string"},
+          "requires_execute": {"type": "boolean"},
+          "requires_external_tool": {"type": "string"}
+        }
+      }
+    }
+  }
+}

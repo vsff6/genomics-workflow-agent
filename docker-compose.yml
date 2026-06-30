@@ -1,0 +1,81 @@
+# Docker Compose for genomics-workflow-agent.
+#
+# Architecture:
+#   Claude Code runs on the HOST.
+#   The `genomics-agent` service provides the bioinformatics tool runtime:
+#     FastQC, MultiQC, fastp, cutadapt, samtools, bcftools, bedtools,
+#     mosdepth, Nextflow, and the Python package itself.
+#
+# No credentials are required for normal usage.
+# Do not put Claude API keys, tokens, or secrets in this file.
+# Do not commit .env files.
+#
+# Usage:
+#   docker compose build genomics-agent
+#   docker compose run --rm genomics-agent python -m genomics_workflow_agent --help
+#   docker compose run --rm genomics-agent python -m pytest tests/ -q
+#
+# With real data (put files under ./data/):
+#   docker compose run --rm genomics-agent \
+#     python -m genomics_workflow_agent agent \
+#       --input data/ --workflow fastq-qc --out results/fastq_agent --execute
+
+services:
+
+  genomics-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: genomics-workflow-agent:latest
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    volumes:
+      # Mount the entire repo so editable installs and test changes are live
+      - .:/workspace
+      # Optional: mount a local data directory for real genomics files
+      - ./data:/workspace/data
+      # Results are written inside the mounted repo (already git-ignored)
+      - ./results:/workspace/results
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONIOENCODING: "utf-8"
+    # No default command - use `docker compose run --rm genomics-agent <cmd>`
+
+  # Optional: development shell with extra bind-mount conveniences.
+  # Only starts when explicitly requested.
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: genomics-workflow-agent:latest
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    profiles:
+      - dev
+    volumes:
+      - .:/workspace
+      - ./data:/workspace/data
+      - ./results:/workspace/results
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONIOENCODING: "utf-8"
+    command: bash
+
+  # Optional: placeholder showing where you'd add a Claude Code service.
+  # Do NOT install Claude credentials into containers.
+  # The recommended setup is: Claude Code on the host + Docker as tool runtime.
+  # Uncomment and configure only if you know what you are doing.
+  #
+  # claude-dev:
+  #   image: genomics-workflow-agent:latest
+  #   profiles:
+  #     - claude
+  #   working_dir: /workspace
+  #   volumes:
+  #     - .:/workspace
+  #   environment:
+  #     # User must export ANTHROPIC_API_KEY before running
+  #     ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+  #   command: bash

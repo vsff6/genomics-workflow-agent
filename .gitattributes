@@ -14,5 +14,6 @@
 *.fa text eol=lf
 *.fastq text eol=lf
 *.cff text eol=lf
+Dockerfile text eol=lf
 .gitignore text eol=lf
 LICENSE text eol=lf

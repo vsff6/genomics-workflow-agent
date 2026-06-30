@@ -24,17 +24,7 @@ def run_fastq_agent(
     trim_tool: str = "fastp",
     max_file_mb: float = 50.0,
 ) -> AgentState:
-    """
-    Observation → Decision → Action agent for FASTQ QC.
-
-    Dry-run (execute=False):
-      Inspects inputs and builds a plan. Does not call any external tool.
-      Reports what would be observed, and what cannot yet be decided.
-
-    Execute (execute=True):
-      Runs FastQC and MultiQC. Parses outputs. Evaluates results.
-      If auto_trim=True and trimming is recommended, also runs trimming.
-    """
+    """Run the FASTQ QC agent loop. Pass execute=True to call real tools."""
     if auto_trim and not execute:
         raise ValueError("--auto-trim requires --execute. Trimming cannot run in dry-run mode.")
 
@@ -119,7 +109,7 @@ def _inspect_inputs(input_path: Path, max_file_mb: float, state: AgentState) -> 
     if large_files:
         state.warnings.append(
             f"{len(large_files)} file(s) exceed {max_file_mb} MB. "
-            "Large files are not loaded into memory — only shell commands are used."
+            "Large files are not loaded into memory - only shell commands are used."
         )
     return result
 
@@ -202,7 +192,7 @@ def _maybe_auto_trim(
             "Trimming was NOT run."
         )
         state.recommended_actions.append(RecommendedAction(
-            action="No trimming run — decision engine found no adapter or quality failures",
+            action="No trimming run - decision engine found no adapter or quality failures",
             priority="low",
             reason="auto-trim requires a positive trimming decision from QC evaluation",
             requires_execute=False,
@@ -284,7 +274,7 @@ def write_agent_report_md(state: AgentState, out_path: str | Path) -> Path:
         for step in state.executed_steps:
             status = step.get("status", "?")
             icon = {"succeeded": "✓", "failed": "✗", "skipped": "○", "error": "!"}.get(status, "?")
-            lines.append(f"- {icon} **{step.get('label', '?')}** — {status}")
+            lines.append(f"- {icon} **{step.get('label', '?')}** - {status}")
             if step.get("error"):
                 lines.append(f"  - Error: {step['error']}")
 
@@ -292,7 +282,7 @@ def write_agent_report_md(state: AgentState, out_path: str | Path) -> Path:
         lines.append(f"\n## Observations ({len(state.observations)})\n")
         for obs in state.observations:
             sev = {"critical": "🔴", "warning": "🟡", "info": "🟢"}.get(obs.severity, "•")
-            lines.append(f"### {sev} {obs.sample} — {obs.category}\n")
+            lines.append(f"### {sev} {obs.sample} - {obs.category}\n")
             lines.append(f"**Status**: `{obs.status}` | **Severity**: {obs.severity}\n")
             lines.append(f"{obs.message}\n")
             if obs.suggested_action:

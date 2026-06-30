@@ -1,14 +1,14 @@
 # Skill: scrna-qc-wrapper
 
 ## Purpose
-Wrapper for single-cell RNA-seq QC. The **primary path is always `single-cell-rna-qc@life-sciences`** when available and compatible. `tools/scrna_qc_local.py` is a **fallback only** — used exclusively when the official skill is unavailable or the input format is incompatible. This wrapper adds metadata validation, biological interpretation, provenance, and reporting layers around whichever path is taken.
+Wrapper for single-cell RNA-seq QC. The **primary path is always `single-cell-rna-qc@life-sciences`** when available and compatible. `tools/scrna_qc_local.py` is a **fallback only** - used exclusively when the official skill is unavailable or the input format is incompatible. This wrapper adds metadata validation, biological interpretation, provenance, and reporting layers around whichever path is taken.
 
 ## When to use
 - Input is `.h5ad`, 10x directory, or count matrix (CSV/TSV/MTX).
 - User wants QC metrics, filtering recommendations, or QC plots.
 - Before clustering, annotation, integration, or modeling.
 
-## Positioning — read before proceeding
+## Positioning - read before proceeding
 `single-cell-rna-qc@life-sciences` is the Anthropic Life Sciences official scRNA QC skill. It is the **default and preferred** path. This local wrapper exists to:
 1. Check official skill availability before doing anything else.
 2. Add metadata, privacy, biological interpretation, and provenance layers around the official skill's output.
@@ -41,7 +41,7 @@ Wrapper for single-cell RNA-seq QC. The **primary path is always `single-cell-rn
 4. If metadata is missing, proceed with labeled conservative assumptions.
 5. For human data: confirm data handling is appropriate (no upload to external services unless authorized).
 
-### Official skill path — use this when available
+### Official skill path - use this when available
 If `single-cell-rna-qc@life-sciences` is available and input is compatible (`.h5ad` or 10x `.h5`):
 - Invoke `single-cell-rna-qc@life-sciences`.
 - Do NOT also run `tools/scrna_qc_local.py`. Do not duplicate QC unnecessarily.
@@ -49,10 +49,10 @@ If `single-cell-rna-qc@life-sciences` is available and input is compatible (`.h5
 - Add metadata, provenance, and biological interpretation wrapper (Steps below).
 - Record in report: "QC performed by official `single-cell-rna-qc@life-sciences` skill."
 
-### Local fallback path — use only when official skill is unavailable
+### Local fallback path - use only when official skill is unavailable
 If `single-cell-rna-qc@life-sciences` is **not available** or the input format is incompatible:
 - Record reason: "Official skill unavailable" or "Input format incompatible with official skill."
-- Flag in report: "Local fallback used — `tools/scrna_qc_local.py`. Results may be less comprehensive than the official skill. Consider re-running with official skill when available."
+- Flag in report: "Local fallback used - `tools/scrna_qc_local.py`. Results may be less comprehensive than the official skill. Consider re-running with official skill when available."
 ```bash
 python tools/scrna_qc_local.py \
   --input <path> \
@@ -91,7 +91,7 @@ python tools/report_builder.py \
 ## Failure modes
 - Corrupt or truncated h5ad: inspect_file.py will report the issue
 - Missing mitochondrial genes: report which mito prefix was tried; do not fail silently
-- All cells flagged by a criterion: do not apply — report instead
+- All cells flagged by a criterion: do not apply - report instead
 - Missing sample metadata: proceed with assumptions, document them
 
 ## Reproducibility requirements

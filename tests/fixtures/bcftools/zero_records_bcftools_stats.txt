@@ -1,0 +1,11 @@
+# This file was produced by bcftools stats
+SN	0	number of samples:	1
+SN	0	number of records:	0
+SN	0	number of no-ALTs:	0
+SN	0	number of SNPs:	0
+SN	0	number of MNPs:	0
+SN	0	number of indels:	0
+SN	0	number of others:	0
+SN	0	number of multiallelic sites:	0
+SN	0	number of multiallelic SNP sites:	0
+SN	0	Ts/Tv:	0.0

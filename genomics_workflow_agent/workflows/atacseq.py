@@ -1,4 +1,4 @@
-"""ATAC-seq workflow — nf-core/atacseq planning and execution."""
+"""ATAC-seq workflow - nf-core/atacseq planning and execution."""
 
 from __future__ import annotations
 
@@ -13,11 +13,11 @@ REQUIRED_TOOLS = ["nextflow"]
 OPTIONAL_TOOLS = ["docker", "singularity", "conda", "bedtools", "samtools"]
 
 BIOLOGICAL_CAVEATS = [
-    "FRiP (Fraction of Reads in Peaks) thresholds are not universal — interpret in context of tissue and protocol.",
-    "TSS enrichment scores vary by cell type and genome build — do not apply generic cutoffs.",
+    "FRiP (Fraction of Reads in Peaks) thresholds are not universal - interpret in context of tissue and protocol.",
+    "TSS enrichment scores vary by cell type and genome build - do not apply generic cutoffs.",
     "Nucleosome periodicity in insert-size distribution depends on chromatin accessibility, not just library quality.",
     "Low FRiP may indicate technical failure OR global chromatin remodeling (e.g. differentiation, activation).",
-    "Blacklist regions must match the genome build exactly — mismatched blacklists remove valid signal.",
+    "Blacklist regions must match the genome build exactly - mismatched blacklists remove valid signal.",
     "Peak calling parameters (MACS3 q-value, effective genome size) are tissue- and protocol-dependent.",
     "Replicate concordance must be assessed before merging peak sets.",
 ]
@@ -116,7 +116,7 @@ def plan(
         ],
         "limitations": [
             "This tool generates a plan and samplesheet only. It does not replace nf-core/atacseq.",
-            "FRiP and TSS enrichment require completed alignment — not computed here.",
+            "FRiP and TSS enrichment require completed alignment - not computed here.",
             "Peak-calling parameters depend on experimental context and are not set automatically.",
         ],
     }

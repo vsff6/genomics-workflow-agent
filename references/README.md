@@ -54,9 +54,9 @@ Mismatch (chr1 vs 1) will silently drop all variants, peaks, or reads.
 ## Marker gene lists
 
 For biological interpretation, create:
-- `references/markers_human_pbmc.csv` — Known PBMC marker genes
-- `references/markers_mouse_brain.csv` — Mouse brain cell type markers
-- `references/markers_tumor_<type>.csv` — Tumor-specific markers
+- `references/markers_human_pbmc.csv` - Known PBMC marker genes
+- `references/markers_mouse_brain.csv` - Mouse brain cell type markers
+- `references/markers_tumor_<type>.csv` - Tumor-specific markers
 
 Format:
 ```csv

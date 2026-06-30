@@ -1,5 +1,5 @@
 """
-report_builder.py — Combine Markdown report sections into a final analysis report.
+report_builder.py - Combine Markdown report sections into a final analysis report.
 
 Assembles outputs from file inspection, QC tools, nf-core summaries, and
 biological interpretation into a single reproducible Markdown report.

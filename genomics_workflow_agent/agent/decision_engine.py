@@ -10,11 +10,11 @@ CLINICAL_DISCLAIMER = (
 )
 
 LIMITATIONS = [
-    "FastQC flags are defined for generic short-read sequencing — thresholds may not apply "
+    "FastQC flags are defined for generic short-read sequencing - thresholds may not apply "
     "to all library types (amplicon, long-read, targeted panels, single-cell).",
     "Per-sequence GC content failures may reflect the organism's GC content, not contamination.",
     "High duplication rates may be expected for low-complexity libraries or targeted sequencing.",
-    "Adapter content warnings depend on insert size — very short inserts are expected in some "
+    "Adapter content warnings depend on insert size - very short inserts are expected in some "
     "protocols (e.g., ATAC-seq, ChIP-seq).",
     "All decisions here are deterministic rules applied to QC summary flags. "
     "Biological interpretation requires domain expertise and sample metadata.",
@@ -173,7 +173,7 @@ def evaluate_fastqc_results(
                 evidence={"module": "Per sequence GC content", "fastqc_status": "fail"},
                 suggested_action="Review GC distribution. Check species GC content. Do not auto-filter.",
             ))
-            gc_warnings.append(f"{sample}: GC content FAIL — requires biological context review")
+            gc_warnings.append(f"{sample}: GC content FAIL - requires biological context review")
         elif gc_status == "warn":
             observations.append(_obs(
                 sample=sample,
@@ -213,7 +213,7 @@ def evaluate_fastqc_results(
             confidence="high",
             execute_allowed=execute_allowed,
             safety_notes=[
-                "Trimming modifies reads — always preserve original FASTQ files.",
+                "Trimming modifies reads - always preserve original FASTQ files.",
                 "Trimming parameters should match library type and downstream tool requirements.",
                 "Aggressive trimming can remove genuine signal in some library types.",
             ],

@@ -1,4 +1,4 @@
-"""Samplesheet generators — thin wrappers over nfcore_launcher.py logic."""
+"""Samplesheet generators - thin wrappers over nfcore_launcher.py logic."""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ def build_rnaseq_samplesheet(input_dir: Path, output_path: Path) -> dict:
         "path": str(output_path),
         "rows": len(rows),
         "warnings": [
-            "strandedness set to 'auto' — confirm from library preparation records",
+            "strandedness set to 'auto' - confirm from library preparation records",
             "verify sample names, pairing, and file paths before execution",
         ],
     }
@@ -63,7 +63,7 @@ def build_atacseq_samplesheet(input_dir: Path, output_path: Path) -> dict:
         "path": str(output_path),
         "rows": len(rows),
         "warnings": [
-            "replicate numbers are placeholders — must reflect actual experimental design",
+            "replicate numbers are placeholders - must reflect actual experimental design",
             "blacklist BED must be provided separately",
             "genome build and GTF must be confirmed before execution",
         ],
@@ -99,7 +99,7 @@ def build_sarek_samplesheet(input_dir: Path, output_path: Path) -> dict:
         "rows": len(rows),
         "warnings": [
             "PATIENT_ID placeholders must be replaced with real patient identifiers",
-            "tumor/normal status (0/1) cannot be inferred from filenames — set manually",
+            "tumor/normal status (0/1) cannot be inferred from filenames - set manually",
             "sex must be confirmed from sample metadata",
             "do not execute without manual review",
         ],
@@ -133,7 +133,7 @@ def build_amplicon_samplesheet(input_dir: Path, output_path: Path) -> dict:
         "path": str(output_path),
         "rows": len(rows),
         "warnings": [
-            "run numbers are placeholders — update to match actual sequencing run IDs",
+            "run numbers are placeholders - update to match actual sequencing run IDs",
             "primer sequences must be provided separately (--FW_primer / --RV_primer)",
             "taxonomy database path must be set before execution",
         ],

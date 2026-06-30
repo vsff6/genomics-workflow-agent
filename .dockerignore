@@ -1,13 +1,76 @@
+# Version control
 .git
-.pytest_cache
+.gitignore
+
+# Python caches
 __pycache__
-reports/
-logs/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.egg-info
+dist/
+build/
+
+# Virtual environments
 .venv
 venv/
 conda-env/
-references/*.fa
-references/*.fasta
-references/*.gtf
-references/*.vcf
+
+# Secrets and credentials - never copy into image
+.env
+.env.*
+*.pem
+*.key
+
+# Generated results (large, ignored by git)
+results/
+results_*/
+results_agent/
+results_agent_smoke/
+results_variant_agent/
+results_variant_agent_smoke/
+results_api/
+reports/*
+logs/*
+
+# Logs and temporaries
+*.log
+*.tmp
+
+# Large genomics data files.
+# test/fixture files in tests/fixtures/ are small and ARE included.
+*.bam
+*.cram
+*.sam
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.vcf
+*.vcf.gz
+*.bcf
+*.fa
+*.fasta
+*.fna
+*.gtf
+*.gff
+*.gff3
+*.qza
+*.qzv
+*.h5
+*.h5ad
+
+# Reference data directories
+references/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store

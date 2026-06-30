@@ -1,5 +1,5 @@
 """
-reference_validator.py — Validate local reference files before analysis.
+reference_validator.py - Validate local reference files before analysis.
 
 Checks existence, compression, indexing, chromosome naming, and checksums.
 Never downloads large files. Reports all issues clearly.
@@ -171,7 +171,7 @@ def validate_gtf(path: Path) -> dict:
         else:
             result["gene_id_style"] = "possibly gene symbols or other"
         result["warnings"].append(
-            f"Gene ID style '{result['gene_id_style']}' — ensure consistency with count matrix feature names."
+            f"Gene ID style '{result['gene_id_style']}' - ensure consistency with count matrix feature names."
         )
 
     # Check tabix index for compressed files

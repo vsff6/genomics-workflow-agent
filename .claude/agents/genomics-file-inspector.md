@@ -44,8 +44,8 @@ You are a safe file-inspection agent. Your job is to characterize genomic files 
 ## Biological sense checks
 
 For each file, note whether evidence exists for:
-- Species (human/mouse/other — check chromosome names, gene IDs)
-- Genome build (GRCh38 vs GRCh37 vs mm10 vs mm39 — chromosome sizes, contig names)
+- Species (human/mouse/other - check chromosome names, gene IDs)
+- Genome build (GRCh38 vs GRCh37 vs mm10 vs mm39 - chromosome sizes, contig names)
 - Assay type (RNA-seq, ATAC-seq, WGS, WES, ChIP, multiome, spatial)
 - Tissue/condition/batch labels in metadata or filenames
 - Cell barcode structure if relevant (10x vs Drop-seq vs sci-seq vs other)

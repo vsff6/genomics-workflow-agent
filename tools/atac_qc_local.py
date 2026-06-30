@@ -1,5 +1,5 @@
 """
-atac_qc_local.py — Local ATAC-seq / scATAC-seq QC summarization.
+atac_qc_local.py - Local ATAC-seq / scATAC-seq QC summarization.
 
 Computes metrics from fragments files, peaks BED, and optional BAM.
 Uses bedtools when available for blacklist overlap and FRiP validation.
@@ -226,7 +226,7 @@ def run_bedtools_frip_validation(fragments_path: Path, peaks_path: Path, log) ->
             out["frip_bedtools"] = round(frip, 4)
             out["note"] = (
                 "FRiP computed by bedtools intersect (authoritative). "
-                "FRiP varies by tissue, protocol, and cell type — do not apply universal thresholds."
+                "FRiP varies by tissue, protocol, and cell type - do not apply universal thresholds."
             )
         else:
             out["error"] = result.stderr[:500]
@@ -238,7 +238,7 @@ def run_bedtools_frip_validation(fragments_path: Path, peaks_path: Path, log) ->
 
 
 # ──────────────────────────────────────────────────────────
-# Streaming fragment metrics (local fallback — no bedtools)
+# Streaming fragment metrics (local fallback - no bedtools)
 # ──────────────────────────────────────────────────────────
 
 def read_fragments(fragments_path: Path, max_lines: int = MAX_FRAGMENTS_SCAN, log=None):
@@ -425,7 +425,7 @@ def build_markdown(args, metrics: dict, skipped: list, plots: list,
             lines.append(f"  - Fragments in peaks: {metrics['frip'].get('n_fragments_in_peaks')}")
             lines.append(f"  - Note: {metrics['frip'].get('note', '')}")
         else:
-            lines.append(f"- **FRiP**: skipped — {metrics['frip'].get('skipped_reason')}")
+            lines.append(f"- **FRiP**: skipped - {metrics['frip'].get('skipped_reason')}")
 
     if frip_bedtools:
         if "frip_bedtools" in frip_bedtools:
@@ -434,7 +434,7 @@ def build_markdown(args, metrics: dict, skipped: list, plots: list,
             lines.append(f"  - bedtools version: {frip_bedtools.get('tool_version', 'unknown')}")
             lines.append(f"  - Note: {frip_bedtools.get('note', '')}")
         elif "error" in frip_bedtools:
-            lines.append(f"- **FRiP (bedtools)**: Error — {frip_bedtools['error']}")
+            lines.append(f"- **FRiP (bedtools)**: Error - {frip_bedtools['error']}")
 
     if "peaks" in metrics:
         lines.append(f"- **Number of peaks**: {metrics['peaks'].get('n_peaks', '?')}")
@@ -568,7 +568,7 @@ def main():
             elif args.peaks and not has_bedtools:
                 skipped.append({
                     "metric": "FRiP validation (bedtools)",
-                    "reason": "bedtools not installed — local Python FRiP used only",
+                    "reason": "bedtools not installed - local Python FRiP used only",
                     "missing_biological_conclusion": (
                         "FRiP computed by local Python interval overlap may be inaccurate for large datasets. "
                         "bedtools intersect provides authoritative, strand-aware overlap counting."
@@ -633,7 +633,7 @@ def main():
             else:
                 skipped.append({
                     "metric": "Blacklist fraction",
-                    "reason": "Fragments file not found — cannot compute blacklist overlap.",
+                    "reason": "Fragments file not found - cannot compute blacklist overlap.",
                     "missing_biological_conclusion": (
                         "Cannot identify artifactual fragments without a valid fragments file."
                     ),
@@ -641,7 +641,7 @@ def main():
         else:
             skipped.append({
                 "metric": "Blacklist fraction",
-                "reason": "Blacklist BED provided but no fragments file — cannot compute overlap.",
+                "reason": "Blacklist BED provided but no fragments file - cannot compute overlap.",
                 "missing_biological_conclusion": (
                     "Cannot identify artifactual fragments without a fragments file."
                 ),

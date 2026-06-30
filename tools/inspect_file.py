@@ -1,5 +1,5 @@
 """
-inspect_file.py — Low-overhead genomic file inspector.
+inspect_file.py - Low-overhead genomic file inspector.
 
 Detects file type, compression, size, dimensions (where safe), and likely assay.
 Never reads entire large files into memory. Uses sampling and index-aware methods.
@@ -153,7 +153,7 @@ def inspect_vcf(path: Path, compressed: bool) -> dict:
         "header": header,
         "samples": samples,
         "n_samples": len(samples),
-        "notes": "Use bcftools stats for full stats. Sample header only — never load full VCF.",
+        "notes": "Use bcftools stats for full stats. Sample header only - never load full VCF.",
     }
 
 
@@ -329,11 +329,11 @@ def guess_assay(file_type: str, path: Path) -> str:
     }
     guess = mapping.get(file_type, "Unknown")
     if "atac" in name or "fragment" in name or "peak" in name:
-        guess += " — likely ATAC-seq"
+        guess += " - likely ATAC-seq"
     if "rna" in name or "count" in name or "matrix" in name:
-        guess += " — likely RNA-seq/scRNA-seq"
+        guess += " - likely RNA-seq/scRNA-seq"
     if "wgs" in name or "wes" in name or "variant" in name or "snp" in name:
-        guess += " — likely WGS/WES"
+        guess += " - likely WGS/WES"
     return guess
 
 

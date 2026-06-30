@@ -27,7 +27,7 @@ You handle single-cell RNA-seq quality control with biological reasoning. You pr
 
 ## Workflow
 
-### Step 1: Check for official skill — STOP HERE if available
+### Step 1: Check for official skill - STOP HERE if available
 Check if `single-cell-rna-qc@life-sciences` is available.
 
 **If the official skill is available and the input is `.h5ad` or 10x `.h5`:**
@@ -39,7 +39,7 @@ Check if `single-cell-rna-qc@life-sciences` is available.
 **If the official skill is unavailable or the input is incompatible (e.g., raw CSV count matrix):**
 - Note the reason the official skill could not be used.
 - Proceed to Step 2 and use `tools/scrna_qc_local.py` as fallback.
-- Flag in the report: "Local fallback used — official `single-cell-rna-qc@life-sciences` skill was not available or incompatible with input format."
+- Flag in the report: "Local fallback used - official `single-cell-rna-qc@life-sciences` skill was not available or incompatible with input format."
 
 ### Step 2: Gather metadata
 Before running any QC, collect or infer:

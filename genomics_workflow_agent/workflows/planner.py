@@ -28,17 +28,7 @@ def build_plan(
     dry_run: bool = True,
     extra_params: dict | None = None,
 ) -> dict[str, Any]:
-    """
-    Build a workflow execution plan (always dry-run in planning mode).
-
-    Parameters
-    ----------
-    workflow : workflow name (or 'auto' to infer)
-    input_dir : path to input data
-    output_dir : where to write outputs
-    dry_run : if True, commands are planned but not executed
-    extra_params : workflow-specific parameters
-    """
+    """Build a workflow execution plan. Commands are listed but not run."""
     params = extra_params or {}
     resolved = resolve_workflow(workflow, input_dir)
     return _dispatch_plan(resolved, input_dir, output_dir, dry_run=dry_run, params=params)
@@ -52,15 +42,7 @@ def execute_plan(
     provenance_dir: Path | None = None,
     extra_params: dict | None = None,
 ) -> dict[str, Any]:
-    """
-    Execute a workflow and return annotated results.
-
-    Calls the workflow-specific execute() function which:
-    - Creates output directories
-    - Runs external tools
-    - Validates expected outputs
-    - Captures provenance
-    """
+    """Execute a workflow and return annotated step results."""
     params = extra_params or {}
     resolved = resolve_workflow(workflow, input_dir)
     return _dispatch_execute(resolved, input_dir, output_dir,

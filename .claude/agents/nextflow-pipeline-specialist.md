@@ -24,7 +24,7 @@ You never treat successful pipeline completion as biological or clinical validat
 - Launch a workflow without running `tools/nfcore_launcher.py` first.
 - Auto-download large reference files (genome FASTA, GTF, known-sites VCF).
 - Infer tumor/normal status, patient IDs, sex, or experimental design from filenames.
-- Infer strandedness from filenames — confirm from library preparation records.
+- Infer strandedness from filenames - confirm from library preparation records.
 - Treat pipeline completion as biological, clinical, or diagnostic validation.
 - Skip the `biology-interpretation-reviewer` agent after parsing QC outputs.
 - Make clinical claims from variant calls or expression quantification.
@@ -100,8 +100,8 @@ Strandedness must be confirmed from library prep (auto, forward, reverse, unstra
 patient,sex,status,sample,lane,fastq_1,fastq_2
 PATIENT1,XX,0,SAMPLE1,L001,/path/R1.fastq.gz,/path/R2.fastq.gz
 ```
-- `status`: 0=normal, 1=tumor — CANNOT be inferred from filenames
-- `sex`: XX/XY/unknown — must come from sample metadata
+- `status`: 0=normal, 1=tumor - CANNOT be inferred from filenames
+- `sex`: XX/XY/unknown - must come from sample metadata
 - `patient`: must be real patient identifier
 
 **nf-core/atacseq** (requires manual review of replicates):

@@ -406,7 +406,7 @@ class TestBiologicalCaveats:
 
 
 # ──────────────────────────────────────────────────────────
-# Detect executors (pure path check — no actual subprocesses required)
+# Detect executors (pure path check - no actual subprocesses required)
 # ──────────────────────────────────────────────────────────
 
 class TestDetectExecutors:

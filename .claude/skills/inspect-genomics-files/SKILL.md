@@ -41,8 +41,8 @@ python tools/inspect_file.py \
 ```
 
 ## Expected outputs
-- `file_inventory.json` — machine-readable inventory
-- `file_inventory.md` — human-readable inventory table
+- `file_inventory.json` - machine-readable inventory
+- `file_inventory.md` - human-readable inventory table
 - Missing metadata checklist
 - Recommended next workflow
 

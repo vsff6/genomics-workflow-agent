@@ -110,7 +110,7 @@ def write_markdown_report(
     if skipped:
         lines.append("\n## Skipped Steps\n")
         for s in skipped:
-            lines.append(f"- **{s.get('step', '?')}**: {s.get('reason', '')} — Install: `{s.get('install', 'see docs')}`")
+            lines.append(f"- **{s.get('step', '?')}**: {s.get('reason', '')} - install: `{s.get('install', 'see docs')}`")
 
     # Biological caveats
     caveats = plan.get("biological_caveats", [])

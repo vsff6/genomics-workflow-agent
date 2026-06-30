@@ -1,4 +1,4 @@
-"""Tool availability checker — wraps tools/check_environment.py logic."""
+"""Checks which external bioinformatics tools are available on the system."""
 
 from __future__ import annotations
 

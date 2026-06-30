@@ -1,5 +1,5 @@
 """
-scrna_qc_local.py — Local fallback scRNA-seq QC tool.
+scrna_qc_local.py - Local fallback scRNA-seq QC tool.
 
 Used when single-cell-rna-qc@life-sciences is unavailable or incompatible.
 Computes core QC metrics, plots distributions, recommends filters with biological justification.
@@ -205,14 +205,14 @@ def suggest_filters(metrics: dict, mad_n: float, log: logging.Logger) -> list:
                     "biological_signal": "Rare mature cell types with very low transcriptional activity (mature RBCs, platelets, quiescent stem cells)",
                     "evidence_for_filtering": "Counts near or below ambient RNA level; no detectable marker genes; concordant low n_genes; barcode not in cell-calling whitelist",
                     "evidence_against_filtering": "Detectable lineage markers (HBB, PPBP); cell count in tissue matches expected rare population size; consistent with known biology of sample",
-                    "recommended_action_low": "Flag — inspect for known markers before filtering. If marker-negative and counts near 0, consider Filter.",
+                    "recommended_action_low": "Flag - inspect for known markers before filtering. If marker-negative and counts near 0, consider Filter.",
                 },
                 "high": {
                     "technical_artifact": "Multiplet / doublet barcodes capturing two or more cells",
                     "biological_signal": "Large cells (megakaryocytes, hepatocytes), highly activated immune cells (plasma cells, effector T cells), cycling tumor cells",
                     "evidence_for_filtering": "High doublet score from scrublet/DoubletFinder; co-expression of mutually exclusive lineage markers (e.g., CD3D + CD19); counts 2x the expected single-cell median",
                     "evidence_against_filtering": "No doublet score available; tissue known to contain large cells; high counts concordant with expected activated/cycling population",
-                    "recommended_action_high": "Flag — run doublet detection (scrublet/DoubletFinder) before filtering. Do not remove without doublet score.",
+                    "recommended_action_high": "Flag - run doublet detection (scrublet/DoubletFinder) before filtering. Do not remove without doublet score.",
                 },
             }
         ),
@@ -225,14 +225,14 @@ def suggest_filters(metrics: dict, mad_n: float, log: logging.Logger) -> list:
                     "biological_signal": "Mature erythrocytes, platelets, or highly specialized cells with restricted transcriptomes",
                     "evidence_for_filtering": "Low counts and low genes together; no marker-gene expression; outside expected distribution for protocol/chemistry",
                     "evidence_against_filtering": "HBB/HBA1 or PPBP expression present; known erythroid/platelet biology in tissue; consistent with matched bulk RNA profile",
-                    "recommended_action_low": "Flag — check for HBB/HBA1 expression (RBC markers) before filtering low-gene cells.",
+                    "recommended_action_low": "Flag - check for HBB/HBA1 expression (RBC markers) before filtering low-gene cells.",
                 },
                 "high": {
                     "technical_artifact": "Doublets (two cells merged in one droplet)",
                     "biological_signal": "Large transcriptionally active cells, tumor cells, activated immune cells in S/G2M phase",
                     "evidence_for_filtering": "High doublet score; co-expression of incompatible lineage markers; gene count 2x the modal distribution",
                     "evidence_against_filtering": "No doublet detection available; G2M marker signature present; consistent with tumor or activated immune context",
-                    "recommended_action_high": "Flag — run doublet detection. Stratify by cell cycle if G2M markers present.",
+                    "recommended_action_high": "Flag - run doublet detection. Stratify by cell cycle if G2M markers present.",
                 },
             }
         ),
@@ -245,7 +245,7 @@ def suggest_filters(metrics: dict, mad_n: float, log: logging.Logger) -> list:
                     "biological_signal": "Highly metabolic tissue (heart, brown fat, liver), hypoxic tumor cells, activated immune cells under oxidative stress, ferroptotic cells, cardiac/muscle cells",
                     "evidence_for_filtering": "Concordant low counts and low genes alongside high mito%; no tissue-specific metabolic marker expression; pattern consistent across all batches/samples",
                     "evidence_against_filtering": "Tissue is cardiac, hepatic, brown fat, or skeletal muscle; high mito% cells express tissue-specific markers; high mito% cluster is unique to specific sample or condition",
-                    "recommended_action_high": "Stratify — separate high-mito cells and check for tissue-specific markers. Filter only if marker-negative and count/gene metrics are also low.",
+                    "recommended_action_high": "Stratify - separate high-mito cells and check for tissue-specific markers. Filter only if marker-negative and count/gene metrics are also low.",
                 },
             }
         ),
@@ -431,9 +431,9 @@ def build_markdown_report(args, metrics: dict, suggestions: list, plots: list,
     lines.append("\n## Artifact vs. Plausible Biology\n")
     lines.append("| Observation | Possible Technical Explanation | Possible Biological Explanation | Confidence |")
     lines.append("|-------------|-------------------------------|--------------------------------|------------|")
-    lines.append("| High mito% cells | Dying cells, membrane rupture | Metabolic tissue, hypoxia, tumor stress, cardiac/muscle | low — requires tissue context |")
-    lines.append("| High UMI/gene cells | Doublets | Large cells, activated immune/tumor cells, plasma cells | low — requires doublet scoring |")
-    lines.append("| Low gene count cells | Empty droplets, dead cells | Mature RBCs, platelets, sparse cell types | low — requires marker check |")
+    lines.append("| High mito% cells | Dying cells, membrane rupture | Metabolic tissue, hypoxia, tumor stress, cardiac/muscle | low - requires tissue context |")
+    lines.append("| High UMI/gene cells | Doublets | Large cells, activated immune/tumor cells, plasma cells | low - requires doublet scoring |")
+    lines.append("| Low gene count cells | Empty droplets, dead cells | Mature RBCs, platelets, sparse cell types | low - requires marker check |")
 
     lines.append("\n## Plots Generated\n")
     for p in plots:

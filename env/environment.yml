@@ -48,16 +48,16 @@ dependencies:
 #   conda env create -f env/environment-r.yml
 #
 # Optional external CLI tools (not conda packages, install separately):
-#   samtools   — BAM/CRAM inspection and manipulation
-#   bedtools   — BED file operations
-#   bcftools   — VCF manipulation and stats
-#   fastqc     — Read quality control
-#   multiqc    — Aggregate QC reports
-#   fastp      — Read trimming and QC
-#   macs3      — Peak calling for ATAC-seq and ChIP-seq
-#   deeptools  — BAM coverage, TSS enrichment, heatmaps
-#   nextflow   — Pipeline orchestration (for nf-core)
-#   docker     — Container runtime (for nf-core profiles)
-#   singularity — HPC container runtime (for nf-core on clusters)
-#   tabix      — VCF/BED indexing
-#   mosdepth   — Fast coverage calculation
+#   samtools   - BAM/CRAM inspection and manipulation
+#   bedtools   - BED file operations
+#   bcftools   - VCF manipulation and stats
+#   fastqc     - Read quality control
+#   multiqc    - Aggregate QC reports
+#   fastp      - Read trimming and QC
+#   macs3      - Peak calling for ATAC-seq and ChIP-seq
+#   deeptools  - BAM coverage, TSS enrichment, heatmaps
+#   nextflow   - Pipeline orchestration (for nf-core)
+#   docker     - Container runtime (for nf-core profiles)
+#   singularity - HPC container runtime (for nf-core on clusters)
+#   tabix      - VCF/BED indexing
+#   mosdepth   - Fast coverage calculation

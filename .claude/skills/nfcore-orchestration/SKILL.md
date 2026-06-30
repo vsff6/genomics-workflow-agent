@@ -1,6 +1,6 @@
 ---
 name: nfcore-orchestration
-description: Plans nf-core pipeline runs using tools/nfcore_launcher.py. Generates samplesheets, validates preflight requirements, and writes provenance records. Default is dry-run — never executes without explicit --run flag and passing preflight.
+description: Plans nf-core pipeline runs using tools/nfcore_launcher.py. Generates samplesheets, validates preflight requirements, and writes provenance records. Default is dry-run - never executes without explicit --run flag and passing preflight.
 ---
 
 # nf-core Orchestration Skill
@@ -32,7 +32,7 @@ This is the **local planning and provenance layer**. For production execution, p
 ## Invocation pattern
 
 ```bash
-# Dry-run plan (default — always start here)
+# Dry-run plan (default - always start here)
 python tools/nfcore_launcher.py \
   --workflow rnaseq \
   --input-dir /path/to/fastqs \
@@ -55,16 +55,16 @@ python tools/nfcore_launcher.py \
 |------|----------|
 | `nfcore_plan.json` | Structured plan: executors, blockers, warnings, samplesheet result, caveats |
 | `nfcore_plan.md` | Human-readable plan with biological caveats section |
-| `commands.sh` | Exact Nextflow command — review before running |
-| `samplesheet_{workflow}.csv` | Generated samplesheet — always review before running |
+| `commands.sh` | Exact Nextflow command - review before running |
+| `samplesheet_{workflow}.csv` | Generated samplesheet - always review before running |
 | `nfcore_launcher.log` | Execution log |
 
 ## Safety requirements
 
-- **Default is dry-run** — never execute without `--run`
-- **--run requires preflight pass** — tool exits non-zero if blockers exist
-- **Never download large references** — provide `--genome` key or `--fasta` path
-- **Samplesheets require human review** — especially sarek (tumor/normal, patient ID)
+- **Default is dry-run** - never execute without `--run`
+- **--run requires preflight pass** - tool exits non-zero if blockers exist
+- **Never download large references** - provide `--genome` key or `--fasta` path
+- **Samplesheets require human review** - especially sarek (tumor/normal, patient ID)
 - **Always invoke `biology-interpretation-reviewer`** after parsing pipeline outputs
 
 ## Mandatory biological caveat

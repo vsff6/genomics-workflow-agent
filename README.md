@@ -1,6 +1,6 @@
 # Agentic Genomics Workflow Framework
 
-> Orchestrate reproducible NGS pipelines — inspect, plan, and execute genomics workflows with biological reasoning guardrails.
+> Orchestrate reproducible NGS pipelines - inspect, plan, and execute genomics workflows with biological reasoning guardrails.
 
 [![Tests](https://github.com/vfferreira/genomics-agent-workspace/actions/workflows/tests.yml/badge.svg)](https://github.com/vfferreira/genomics-agent-workspace/actions/workflows/tests.yml)
 
@@ -8,18 +8,29 @@
 
 ## What makes it agentic?
 
-The FASTQ QC agent implements a real observation-decision-action loop. No LLM is called at runtime. All decisions are deterministic rules applied to parsed QC output.
+Two workflows have a real observation-decision-action loop. No LLM is called at runtime. All decisions are deterministic rules applied to parsed QC output.
 
-**For FASTQ QC (`agent --workflow fastq-qc`):**
+**FASTQ QC (`agent --workflow fastq-qc`):**
 
-1. **Observe** — parses FastQC `.zip` files and MultiQC data files into structured per-sample results
-2. **Decide** — applies deterministic rules:
+1. **Observe** - parses FastQC `.zip` files and MultiQC data files into structured per-sample results
+2. **Decide** - applies deterministic rules:
    - Adapter Content WARN or FAIL: recommend trimming
    - Per base sequence quality FAIL: recommend trimming + sample review
    - Per sequence GC content FAIL: flag for biological review, never auto-filter
    - Overrepresented sequences WARN or FAIL: recommend contamination review
    - All tracked modules pass: record no trimming needed
-3. **Act** — if `--execute --auto-trim` are both passed, runs trimming only when the decision engine has recommended it; original FASTQ files are never modified
+3. **Act** - if `--execute --auto-trim` are both passed, runs trimming only when the decision engine has recommended it; original FASTQ files are never modified
+
+**Variant QC (`agent --workflow variant-qc`):**
+
+1. **Observe** - parses samtools flagstat/idxstats/stats, bcftools stats, and mosdepth summary outputs into structured per-sample results
+2. **Decide** - applies deterministic rules:
+   - Mapped reads below 80%: recommend alignment investigation
+   - Zero VCF records: recommend variant calling review
+   - Many zero-read contigs: flag for reference compatibility review
+   - Low coverage (below 10x): warn; do not make diagnostic claims
+   - No issues found: record accept decision
+3. **Recommend** - never makes clinical claims; never uses terms like pathogenic, benign, or diagnostic value
 
 All other subcommands (`run`, `plan`, `inspect`, `report`) are workflow runners: they build commands, execute them, validate outputs, and capture provenance. They do not parse outputs or make decisions.
 
@@ -34,19 +45,20 @@ All other subcommands (`run`, `plan`, `inspect`, `report`) are workflow runners:
 - Validates that expected outputs exist after each step
 - Captures provenance (command, exit code, stdout/stderr, timestamps) for every executed step
 - Generates Markdown and JSON reports at every stage
-- Makes deterministic agentic decisions for FASTQ QC: parses outputs, applies rules, recommends or runs trimming
+- Makes deterministic agentic decisions for FASTQ QC and Variant QC: parses outputs, applies rules, recommends or runs actions
+- Exposes a stable Python API (`from genomics_workflow_agent import inspect_inputs, plan_workflow, run_workflow, run_fastq_qc_agent, run_variant_qc_agent`) for use by other Python projects
 - Delegates computation to FastQC, MultiQC, fastp, cutadapt, samtools, bcftools, mosdepth, Nextflow/nf-core
 
 ## What this does NOT do
 
 - Does not reimplement FastQC, MultiQC, fastp, cutadapt, samtools, bcftools, mosdepth, Nextflow, nf-core, QIIME2, or DADA2
-- Does not call an LLM at runtime — all decisions are deterministic rules
-- Does not make agentic decisions for variant-qc, rnaseq, atacseq, or amplicon workflows yet
-- Does not directly execute QIIME2 or DADA2 — amplicon workflow generates Nextflow/nf-core commands
-- Does not make clinical claims — variant calls are never interpreted as diagnoses
-- Does not load large genomic files into memory — file operations are delegated to CLI tools
-- Does not download large reference files — references must be provided locally
-- Does not silently fail — every skipped step and failed command is recorded
+- Does not call an LLM at runtime - all decisions are deterministic rules
+- Does not make agentic decisions for rnaseq, atacseq, or amplicon workflows yet
+- Does not directly execute QIIME2 or DADA2 - amplicon workflow generates Nextflow/nf-core commands
+- Does not make clinical claims - variant calls are never interpreted as diagnoses
+- Does not load large genomic files into memory - file operations are delegated to CLI tools
+- Does not download large reference files - references must be provided locally
+- Does not silently fail - every skipped step and failed command is recorded
 
 ---
 
@@ -54,21 +66,145 @@ All other subcommands (`run`, `plan`, `inspect`, `report`) are workflow runners:
 
 | Workflow | CLI name | Plan | Execute | Agentic decisions | Tool backend | Status |
 |----------|----------|------|---------|-------------------|--------------|--------|
-| FASTQ QC | `fastq-qc` | Yes | Yes | Yes (FASTQ agent) | FastQC + MultiQC | Implemented |
-| Trimming | `fastq-qc --trim` | Yes | Yes | Via FASTQ agent `--auto-trim` | fastp / cutadapt | Implemented |
-| Variant QC | `variant-qc` | Yes | Yes | No | samtools + bcftools + mosdepth | Execution-capable |
+| FASTQ QC | `fastq-qc` | Yes | Yes | Yes (FASTQ agent) | FastQC + MultiQC | Implemented + Agentic |
+| Trimming | `fastq-qc --trim` | Yes | Yes | Via FASTQ agent `--auto-trim` | fastp / cutadapt | Implemented + Agentic |
+| Variant QC | `variant-qc` | Yes | Yes | Yes (Variant agent) | samtools + bcftools + mosdepth | Implemented + Agentic |
 | WGS full pipeline | `variant-qc` | Yes | Cautious | No | nf-core/sarek (Nextflow) | Planning / cautious execution |
 | RNA-seq | `rnaseq` | Yes | Yes (needs Nextflow) | No | nf-core/rnaseq (Nextflow) | Execution-capable |
 | ATAC-seq | `atacseq` | Yes | Yes (needs Nextflow) | No | nf-core/atacseq (Nextflow) | Execution-capable |
 | Amplicon / Microbiome | `amplicon` | Yes | Yes (needs Nextflow) | No | nf-core/ampliseq (Nextflow) | Execution-capable |
 | Auto-detect | `auto` | Yes | Yes | No | (inferred from input) | Implemented |
-| scRNA-seq | — | No | No | No | External skill preferred | Not directly implemented |
+| scRNA-seq | - | No | No | No | External skill preferred | Not directly implemented |
 
 **Notes:**
 - "Execution-capable" means the framework builds correct commands and runs them via subprocess with provenance capture. It does not interpret the results.
 - Nextflow workflows require Nextflow installed and a container runtime (Docker, Singularity) or conda.
 - nf-core/sarek samplesheets contain placeholders that require human review before execution.
 - scRNA-seq is out of scope for the Python package; use `single-cell-rna-qc@life-sciences` or `tools/scrna_qc_local.py` as a fallback.
+
+---
+
+## Using as a Python Library
+
+```python
+from genomics_workflow_agent import (
+    inspect_inputs,
+    plan_workflow,
+    run_workflow,
+    run_fastq_qc_agent,
+    run_variant_qc_agent,
+    write_report,
+)
+
+# Inspect what is in a directory
+result = inspect_inputs("data/fastqs/")
+print(result["summary"]["workflow_guess"])  # e.g. "fastq-qc"
+
+# Build a dry-run plan (no tools executed)
+plan = plan_workflow("data/fastqs/", workflow="fastq-qc", outdir="results/")
+print(plan["summary"]["steps"])
+
+# Run the FASTQ QC agent (dry-run by default)
+agent_result = run_fastq_qc_agent("data/fastqs/", outdir="results_agent/")
+for obs in agent_result["observations"]:
+    print(obs["sample"], obs["category"], obs["status"])
+
+# Run the variant QC agent (dry-run by default)
+variant_result = run_variant_qc_agent("data/wgs/", outdir="results_variant_agent/")
+for dec in variant_result["decisions"]:
+    print(dec["action"], dec["decision_type"])
+```
+
+All public functions return a plain JSON-serializable dict. See `genomics_workflow_agent/schemas/` for field contracts. See `examples/api_usage/` for runnable examples.
+
+**Agentic workflows (v0.3.0):**
+- `fastq-qc` - full observe-decide-act loop (FastQC/MultiQC parsing, trimming decisions)
+- `variant-qc` - observe-decide-recommend loop (samtools/bcftools/mosdepth parsing, alignment and VCF checks)
+- `rnaseq`, `atacseq`, `amplicon` - execution-capable runners, not agentic interpreters yet
+
+---
+
+## Running with Docker
+
+Docker provides a reproducible bioinformatics runtime with all tools pre-installed.
+**Claude Code runs on the host**; Docker provides the tool environment.
+
+```bash
+# Build the image (first time or after Dockerfile changes)
+docker compose build genomics-agent
+
+# CLI help
+docker compose run --rm genomics-agent python -m genomics_workflow_agent --help
+
+# API import smoke test
+docker compose run --rm genomics-agent python -c \
+  "from genomics_workflow_agent import inspect_inputs, plan_workflow, run_workflow, run_fastq_qc_agent, run_variant_qc_agent; print('api ok')"
+
+# Run tests
+docker compose run --rm genomics-agent python -m pytest tests/ -q
+
+# FASTQ QC agent - dry-run (no external tools called)
+docker compose run --rm genomics-agent python -m genomics_workflow_agent agent \
+  --input examples/ --workflow fastq-qc --out results_agent_smoke/
+
+# Variant QC agent - dry-run (no external tools called)
+docker compose run --rm genomics-agent python -m genomics_workflow_agent agent \
+  --input examples/ --workflow variant-qc --out results_variant_agent_smoke/
+
+# FASTQ QC agent - execute with real tools (FastQC/MultiQC run inside container)
+# Put data under ./data/ first, then:
+docker compose run --rm genomics-agent python -m genomics_workflow_agent agent \
+  --input data/ --workflow fastq-qc --out results/fastq_agent --execute
+
+# Variant QC agent - execute with real BAM/VCF files
+docker compose run --rm genomics-agent python -m genomics_workflow_agent agent \
+  --input data/ --workflow variant-qc --out results/variant_agent --execute
+```
+
+Helper scripts (run from the host):
+
+```bash
+# Check all tool versions inside the container
+bash scripts/docker_check_tools.sh
+# Or on Windows PowerShell:
+.\scripts\docker_check_tools.ps1
+
+# Run tests
+bash scripts/docker_test.sh          # Linux/macOS
+.\scripts\docker_test.ps1            # Windows
+
+# Run demos
+bash scripts/docker_demo_fastq_agent.sh
+.\scripts\docker_demo_fastq_agent.ps1
+```
+
+**Nextflow / nf-core note:**
+Nextflow is installed in the image. Running nf-core pipelines from inside Docker
+requires extra setup depending on the execution profile:
+
+- `docker` profile needs the host Docker socket mounted (`-v /var/run/docker.sock:/var/run/docker.sock`)
+- `singularity` profile is preferred on HPC systems
+- `conda` profile works but can be slower inside the container
+- Do not run full nf-core/rnaseq, nf-core/atacseq, nf-core/ampliseq, or nf-core/sarek in demos; they require references and configuration
+- Full pipeline execution requires explicit user approval and a configured reference genome
+
+---
+
+## Claude Code usage
+
+`.claude/agents/` contains Claude Code agent definitions for specialized tasks.
+These are orchestration definitions - they are not Python runtime code.
+
+**Recommended setup:**
+- Claude Code runs on the **host**
+- Docker provides the reproducible bioinformatics tool runtime
+- Claude Code issues `docker compose run --rm genomics-agent ...` for real tool execution
+- Dry-run commands (`python -m genomics_workflow_agent ... ` without `--execute`) can run on the host directly
+
+**Security:**
+- Do not put Claude API keys, tokens, or credentials into Dockerfiles or docker-compose.yml
+- Do not commit `.env` files
+- Docker is for tool reproducibility, not for storing secrets
 
 ---
 
@@ -146,12 +282,12 @@ python -m genomics_workflow_agent agent \
 
 Output files:
 
-- `results_agent/agent_report.json` — structured state: observations, decisions, recommended actions
-- `results_agent/agent_report.md` — human-readable report with reasoning
-- `results_agent/fastqc/` — FastQC HTML and zip outputs (if `--execute`)
-- `results_agent/multiqc/` — MultiQC report (if `--execute`)
-- `results_agent/trimmed/` — trimmed reads (only if `--auto-trim` and trimming was recommended)
-- `results_agent/provenance/` — per-step provenance JSON files
+- `results_agent/agent_report.json` - structured state: observations, decisions, recommended actions
+- `results_agent/agent_report.md` - human-readable report with reasoning
+- `results_agent/fastqc/` - FastQC HTML and zip outputs (if `--execute`)
+- `results_agent/multiqc/` - MultiQC report (if `--execute`)
+- `results_agent/trimmed/` - trimmed reads (only if `--auto-trim` and trimming was recommended)
+- `results_agent/provenance/` - per-step provenance JSON files
 
 ---
 
@@ -231,13 +367,25 @@ genomics_workflow_agent/
 ├── __init__.py
 ├── __main__.py
 ├── cli.py                    # CLI entry point (inspect/plan/run/report/agent)
+├── api.py                    # Public Python API (inspect_inputs, plan_workflow, run_workflow, ...)
 ├── agent/
 │   ├── state.py              # AgentState, Observation, Decision, RecommendedAction
 │   ├── decision_engine.py    # Deterministic FASTQ QC rules
-│   └── fastq_agent.py        # Observation-decision-action orchestrator + report writers
+│   ├── fastq_agent.py        # FASTQ observe-decide-act orchestrator + report writers
+│   ├── variant_decision_engine.py  # Deterministic variant/BAM/VCF QC rules
+│   └── variant_agent.py      # Variant QC observe-decide-recommend orchestrator + report writers
 ├── parsers/
 │   ├── fastqc.py             # FastQC zip/txt parser -> structured per-sample results
-│   └── multiqc.py            # MultiQC TSV/JSON/HTML parser
+│   ├── multiqc.py            # MultiQC TSV/JSON/HTML parser
+│   ├── samtools.py           # samtools flagstat/idxstats/stats parser
+│   ├── bcftools.py           # bcftools stats parser
+│   └── mosdepth.py           # mosdepth summary parser
+├── schemas/
+│   ├── inspection_result.schema.json
+│   ├── workflow_plan.schema.json
+│   ├── run_result.schema.json
+│   ├── agent_result.schema.json
+│   └── provenance_record.schema.json
 ├── inspect/
 │   └── inspector.py          # File type detection, directory summary, workflow guess
 ├── workflows/
@@ -266,7 +414,7 @@ Legacy CLI tools (fallbacks, not part of the agentic layer):
 
 ```
 tools/
-├── scrna_qc_local.py         # scRNA-seq QC (fallback-only — prefer single-cell-rna-qc@life-sciences)
+├── scrna_qc_local.py         # scRNA-seq QC (fallback-only - prefer single-cell-rna-qc@life-sciences)
 ├── atac_qc_local.py          # ATAC-seq QC (fallback)
 ├── wgs_vcf_qc_local.py       # WGS/VCF QC (fallback)
 ├── nfcore_launcher.py        # nf-core workflow launcher
@@ -277,7 +425,7 @@ tools/
 
 ## Amplicon Taxonomy Databases
 
-The amplicon workflow supports planning for these taxonomy databases. Database files must be downloaded separately — the framework never downloads large references automatically.
+The amplicon workflow supports planning for these taxonomy databases. Database files must be downloaded separately - the framework never downloads large references automatically.
 
 | Database | Target |
 |----------|--------|
@@ -360,13 +508,13 @@ When official Anthropic Life Sciences skills are available, agents prefer them o
 
 ## Safety and Limitations
 
-- **No clinical claims** — enforced by tests. Variant QC and FASTQ agent outputs explicitly disclaim clinical interpretation.
-- **No LLM at runtime** — all decisions are deterministic rules applied to parsed QC flags.
-- **No large-file loading** — files above 50 MB are not read into memory. All large-file operations are delegated to CLI tools.
-- **No silent failures** — every failed command is recorded in provenance with exit code and stderr.
-- **No automatic reference downloads** — reference files must be provided locally.
-- **Samplesheets require human review** — auto-generated samplesheets for nf-core pipelines contain placeholders that must be corrected before execution.
-- **Dry-run by default** — expensive workflows are never launched without an explicit `--execute` flag.
+- **No clinical claims** - enforced by tests. Variant QC and FASTQ agent outputs explicitly disclaim clinical interpretation.
+- **No LLM at runtime** - all decisions are deterministic rules applied to parsed QC flags.
+- **No large-file loading** - files above 50 MB are not read into memory. All large-file operations are delegated to CLI tools.
+- **No silent failures** - every failed command is recorded in provenance with exit code and stderr.
+- **No automatic reference downloads** - reference files must be provided locally.
+- **Samplesheets require human review** - auto-generated samplesheets for nf-core pipelines contain placeholders that must be corrected before execution.
+- **Dry-run by default** - expensive workflows are never launched without an explicit `--execute` flag.
 
 ---
 
@@ -407,10 +555,13 @@ Human genomic data is treated as privacy-sensitive by default. Do not upload or 
 
 ## Future Work
 
-- Agentic decision layer for variant-qc, rnaseq, atacseq, and amplicon workflows
-- Per-sample MultiQC TSV parsing connected to the FASTQ agent decision engine
+- Agentic interpretation for RNA-seq outputs (nf-core/rnaseq: mapping rate, strandedness, dedup rate)
+- Agentic interpretation for ATAC-seq outputs (peak counts, FRiP score, fragment size distribution)
+- Agentic interpretation for amplicon outputs (rarefaction, taxa assignment quality, alpha diversity flags)
 - Direct QIIME2/DADA2 execution (currently generates Nextflow/nf-core commands only)
+- Richer MultiQC TSV parsing integrated into the FASTQ agent decision engine
 - HTML report export
-- Adaptive Nextflow pipeline decisions based on parsed pipeline outputs
+- Adaptive Nextflow decisions based on parsed pipeline completion outputs
 - Benchmark datasets and integration test fixtures for CI
 - R-based downstream workflow documentation (DESeq2, phyloseq)
+- Stable service/API wrapper if deployment as a microservice is needed

@@ -4,7 +4,7 @@ All notable changes are documented here. Versioning follows [Semantic Versioning
 
 ---
 
-## [0.2.0] — 2025-06-24
+## [0.2.0] - 2025-06-24
 
 ### Added
 
@@ -21,12 +21,12 @@ All notable changes are documented here. Versioning follows [Semantic Versioning
 ### Fixed
 
 - `.gitignore`: removed `env/` directory pattern that prevented `env/environment.yml` from being tracked
-- `run_samtools_idxstats`: removed dead code — stray duplicate dict key with broken string literal
+- `run_samtools_idxstats`: removed dead code - stray duplicate dict key with broken string literal
 - `atac_qc_local.py`: removed dead `cmd_count_total` variable (assigned but never used)
 
 ---
 
-## [0.1.0] — 2024
+## [0.1.0] - 2024
 
 ### Added
 

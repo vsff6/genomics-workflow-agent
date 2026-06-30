@@ -1,4 +1,4 @@
-"""RNA-seq workflow — nf-core/rnaseq planning and execution."""
+"""RNA-seq workflow - nf-core/rnaseq planning and execution."""
 
 from __future__ import annotations
 
@@ -16,12 +16,12 @@ REQUIRED_TOOLS = ["nextflow"]
 OPTIONAL_TOOLS = ["docker", "singularity", "conda", "fastqc", "multiqc"]
 
 BIOLOGICAL_CAVEATS = [
-    "Strandedness must match library preparation protocol — always confirm from records, not filenames.",
+    "Strandedness must match library preparation protocol - always confirm from records, not filenames.",
     "Genome build and GTF annotation must be consistent. Mismatched builds invalidate gene-level counts.",
     "Batch effects, tissue, condition, and replicate metadata are required for meaningful differential expression.",
     "Salmon/STAR quantification is not normalization. TPM and raw counts require appropriate statistical models.",
     "Successful alignment or quantification is not biological validation.",
-    "Intronic reads in smart-seq or similar protocols may inflate counts — check protocol carefully.",
+    "Intronic reads in smart-seq or similar protocols may inflate counts - check protocol carefully.",
 ]
 
 
@@ -55,7 +55,7 @@ def plan(
 
     if not genome and not fasta:
         missing_requirements.append("--genome (nf-core key, e.g. GRCh38) or --fasta (local path) required")
-        warnings.append("No reference genome specified — command will be incomplete")
+        warnings.append("No reference genome specified - command will be incomplete")
 
     if fasta and not Path(fasta).exists():
         blockers.append(f"FASTA not found: {fasta}")

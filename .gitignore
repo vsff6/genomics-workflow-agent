@@ -35,6 +35,9 @@ results/
 results_*/
 results_agent/
 results_agent_smoke/
+results_variant_agent/
+results_variant_agent_smoke/
+results_api/
 
 
 *.bam

@@ -1,8 +1,8 @@
 """
-Amplicon/microbiome workflow — planning and execution via nf-core/ampliseq.
+Amplicon/microbiome workflow - planning and execution via nf-core/ampliseq.
 
 Execution priority:
-  1. nf-core/ampliseq (preferred — fully validated pipeline)
+  1. nf-core/ampliseq (preferred - fully validated pipeline)
   2. QIIME2 direct (if available and ampliseq not requested)
   3. R/DADA2 (if available and QIIME2 not available)
 
@@ -62,14 +62,14 @@ TAXONOMY_DATABASES = {
 
 BIOLOGICAL_CAVEATS = [
     "16S rRNA V-region primer choice determines taxonomic resolution and community biases.",
-    "DADA2 error models are run-specific — denoise each sequencing run separately before merging.",
-    "Rarefaction discards reads and introduces variance — evaluate necessity from depth distribution.",
-    "Alpha diversity metrics (Shannon, Faith PD) have different sensitivity to rare taxa — report multiple.",
+    "DADA2 error models are run-specific - denoise each sequencing run separately before merging.",
+    "Rarefaction discards reads and introduces variance - evaluate necessity from depth distribution.",
+    "Alpha diversity metrics (Shannon, Faith PD) have different sensitivity to rare taxa - report multiple.",
     "Beta diversity ordination (Bray-Curtis, UniFrac) is sensitive to data transformation and normalisation.",
-    "Taxonomy confidence thresholds affect rare taxon detection — do not use generic defaults without validation.",
+    "Taxonomy confidence thresholds affect rare taxon detection - do not use generic defaults without validation.",
     "Phylogenetic diversity metrics (Faith PD, UniFrac) require a phylogenetic tree.",
-    "Amplicon sequencing is not metagenomics — functional inference from taxonomy is indirect.",
-    "Database version and taxonomic nomenclature affect reproducibility — always record version.",
+    "Amplicon sequencing is not metagenomics - functional inference from taxonomy is indirect.",
+    "Database version and taxonomic nomenclature affect reproducibility - always record version.",
 ]
 
 
@@ -215,7 +215,7 @@ def plan(
         "limitations": [
             "nf-core/ampliseq is the primary execution path. Direct QIIME2 execution is planned only.",
             "Taxonomy databases must be downloaded separately if providing a local path.",
-            "Phylogenetic diversity requires a tree — ampliseq produces one via QIIME2 internally.",
+            "Phylogenetic diversity requires a tree - ampliseq produces one via QIIME2 internally.",
             "This framework does not replace QIIME2, DADA2, or nf-core/ampliseq.",
         ],
     }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# run_tiny_demo.sh — End-to-end toy workflow for the genomics-agent workspace.
+# run_tiny_demo.sh - End-to-end toy workflow for the genomics-agent workspace.
 #
 # Runs all local tools on the tiny example files in examples/ and assembles
 # a final report at reports/demo/final_report.md.
@@ -10,7 +10,7 @@
 # Requirements:
 #   Python 3.11+ with numpy, pandas, scipy, matplotlib, seaborn, h5py in PATH.
 #   Run from the repository root.
-#   scanpy/anndata optional — scRNA QC step degrades gracefully without them.
+#   scanpy/anndata optional - scRNA QC step degrades gracefully without them.
 #
 # This demo exercises the LOCAL FALLBACK path only.
 # In production, use single-cell-rna-qc@life-sciences for scRNA QC
@@ -60,7 +60,7 @@ echo "[3/8] Validating reference files..."
 echo ""
 
 # ── Step 4: scRNA-seq QC (local fallback) ───────────────────────
-echo "[4/8] scRNA-seq QC (local fallback — official single-cell-rna-qc@life-sciences preferred)..."
+echo "[4/8] scRNA-seq QC (local fallback - official single-cell-rna-qc@life-sciences preferred)..."
 "$PYTHON" tools/scrna_qc_local.py \
   --input examples/tiny_counts.csv \
   --species human \
@@ -89,7 +89,7 @@ echo "[6/8] WGS/VCF QC..."
 echo ""
 
 # ── Step 7: nf-core/rnaseq planning (dry run) ───────────────────
-echo "[7/8] nf-core/rnaseq plan (dry run — Nextflow not required)..."
+echo "[7/8] nf-core/rnaseq plan (dry run - Nextflow not required)..."
 "$PYTHON" tools/nfcore_launcher.py \
   --workflow rnaseq \
   --input-dir examples \

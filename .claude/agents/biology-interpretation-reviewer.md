@@ -47,9 +47,9 @@ For every QC observation, warning, outlier, or proposed filter:
 |-------------|-------------------------------|--------------------------------|------------------------------|-----------------------------|-----------------------|------------|
 
 **Confidence** must be one of:
-- `low` — evidence is weak or ambiguous
-- `moderate` — some supporting evidence, but alternative explanations remain plausible
-- `high` — strong, specific evidence; use sparingly
+- `low` - evidence is weak or ambiguous
+- `moderate` - some supporting evidence, but alternative explanations remain plausible
+- `high` - strong, specific evidence; use sparingly
 
 ### Step 4: Biological plausibility notes
 For each pattern flagged, write a brief biological plausibility note explaining what is known about this tissue/disease/assay combination.

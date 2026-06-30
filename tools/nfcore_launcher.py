@@ -1,5 +1,5 @@
 """
-nfcore_launcher.py — nf-core workflow planner and safe launcher.
+nfcore_launcher.py - nf-core workflow planner and safe launcher.
 
 Builds samplesheets, validates preflight requirements, constructs Nextflow
 commands, and optionally executes them.
@@ -103,7 +103,7 @@ def _pair_fastqs(fastq_files: list) -> tuple[list, dict]:
 
 
 # ──────────────────────────────────────────────────────────
-# Samplesheet builders (pure — no subprocess)
+# Samplesheet builders (pure - no subprocess)
 # ──────────────────────────────────────────────────────────
 
 def build_rnaseq_samplesheet(input_dir: Path, output_path: Path, log) -> dict:
@@ -111,7 +111,7 @@ def build_rnaseq_samplesheet(input_dir: Path, output_path: Path, log) -> dict:
     Build an nf-core/rnaseq samplesheet from FASTQ files in input_dir.
 
     Detects paired-end (*_R1*/*_R2* or *_1*/*_2*) and single-end FASTQ files.
-    Strandedness defaults to 'auto' — must be confirmed from library prep records.
+    Strandedness defaults to 'auto' - must be confirmed from library prep records.
     """
     fastq_files = find_fastq_files(input_dir)
     if not fastq_files:
@@ -158,7 +158,7 @@ def build_rnaseq_samplesheet(input_dir: Path, output_path: Path, log) -> dict:
         "path": str(output_path),
         "rows": len(rows),
         "warnings": [
-            "strandedness set to 'auto' — confirm from library preparation records before running",
+            "strandedness set to 'auto' - confirm from library preparation records before running",
             "verify sample names, pairing, and file paths before execution",
         ],
     }
@@ -209,7 +209,7 @@ def build_sarek_samplesheet(input_dir: Path, output_path: Path, log) -> dict:
         "rows": len(rows),
         "warnings": [
             "PATIENT_ID placeholders must be replaced with real patient identifiers",
-            "tumor/normal status (status=0/1) cannot be inferred from filenames — set manually",
+            "tumor/normal status (status=0/1) cannot be inferred from filenames - set manually",
             "sex (XX/XY/unknown) must be confirmed from sample metadata",
             "pedigree, germline/somatic context, and disease status cannot be inferred automatically",
             "target intervals for WES must be added manually via --wes_intervals or pipeline config",
@@ -256,7 +256,7 @@ def build_atacseq_samplesheet(input_dir: Path, output_path: Path, log) -> dict:
         "path": str(output_path),
         "rows": len(rows),
         "warnings": [
-            "replicate numbers are placeholders — must reflect the actual experimental design",
+            "replicate numbers are placeholders - must reflect the actual experimental design",
             "control/input samples must be identified and annotated separately",
             "blacklist BED must be provided via --blacklist or pipeline config",
             "genome build and matching GTF/FASTA must be confirmed before execution",
@@ -266,7 +266,7 @@ def build_atacseq_samplesheet(input_dir: Path, output_path: Path, log) -> dict:
 
 
 # ──────────────────────────────────────────────────────────
-# Command builder (pure — no subprocess)
+# Command builder (pure - no subprocess)
 # ──────────────────────────────────────────────────────────
 
 def build_nfcore_command(workflow: str, args, samplesheet_path: str) -> list:
@@ -311,10 +311,10 @@ def build_nfcore_command(workflow: str, args, samplesheet_path: str) -> list:
 
 BIOLOGICAL_CAVEATS = {
     "rnaseq": [
-        "Strandedness must match library preparation protocol — confirm before running.",
+        "Strandedness must match library preparation protocol - confirm before running.",
         "Genome build and GTF annotation version must match each other and all downstream tools.",
         "Batch, tissue, condition, and replicate metadata are required for meaningful differential "
-        "expression analysis — quantification output alone is not interpretable.",
+        "expression analysis - quantification output alone is not interpretable.",
         "Successful quantification is not biological validation.",
         "Salmon/STAR count estimates require normalization and experimental context to interpret.",
     ],
@@ -324,7 +324,7 @@ BIOLOGICAL_CAVEATS = {
         "(WES) must be confirmed by the analyst before running.",
         "Reference build and known-sites VCF compatibility (BQSR) must be verified.",
         "Sequencing type (WGS vs WES), tumor purity, ploidy, and contamination are not automatically determined.",
-        "Successful variant calling is not clinical validation — pathogenicity requires expert review "
+        "Successful variant calling is not clinical validation - pathogenicity requires expert review "
         "with validated annotation sources.",
         "Ancestry and population context affect variant interpretation and must not be assumed.",
     ],
@@ -332,8 +332,8 @@ BIOLOGICAL_CAVEATS = {
         "Genome build, blacklist BED, and GTF annotation must be consistent across all pipeline inputs.",
         "Replicate structure and control/input sample assignment must reflect the experimental design.",
         "Peak-calling strategy (MACS3 settings, effective genome size, q-value) is tissue- and "
-        "protocol-dependent — defaults may not be appropriate.",
-        "FRiP and TSS enrichment thresholds are not universal — interpret in context of tissue, "
+        "protocol-dependent - defaults may not be appropriate.",
+        "FRiP and TSS enrichment thresholds are not universal - interpret in context of tissue, "
         "protocol, and cell type.",
         "Successful peak calling is not biological validation.",
     ],
@@ -347,7 +347,7 @@ BIOLOGICAL_CAVEATS = {
 def parse_multiqc_output(output_dir: Path, log) -> dict:
     """
     Summarize MultiQC outputs in a pipeline output directory.
-    Does not require MultiQC to be installed — reads existing files only.
+    Does not require MultiQC to be installed - reads existing files only.
     """
     result = {
         "searched_path": str(output_dir),
@@ -369,7 +369,7 @@ def parse_multiqc_output(output_dir: Path, log) -> dict:
         log.info(f"MultiQC HTML report: {html_candidates[0]}")
     else:
         result["skipped"].append(
-            "multiqc_report.html not found — pipeline may not have completed or MultiQC was not run"
+            "multiqc_report.html not found - pipeline may not have completed or MultiQC was not run"
         )
 
     data_dirs = list(output_dir.rglob("multiqc_data"))
@@ -408,7 +408,7 @@ def build_markdown(
     workflow: str, plan: dict, caveats: list, executors: dict,
     samplesheet_result: dict, command: list, dry_run: bool,
 ) -> str:
-    mode_label = "DRY RUN (planning only — no workflow was launched)" if dry_run else "RUN"
+    mode_label = "DRY RUN (planning only - no workflow was launched)" if dry_run else "RUN"
     lines = [
         f"# nf-core/{workflow} Plan",
         f"\nGenerated: {datetime.now().isoformat()}",
@@ -453,7 +453,7 @@ def build_markdown(
         lines.append(f"- **Rows**: {samplesheet_result['rows']}")
         ss_warnings = samplesheet_result.get("warnings", [])
         if ss_warnings:
-            lines.append("\n**Samplesheet warnings — review before executing:**\n")
+            lines.append("\n**Samplesheet warnings - review before executing:**\n")
             for w in ss_warnings:
                 lines.append(f"- [WARN] {w}")
     else:
@@ -509,7 +509,7 @@ def main():
         description=(
             "nf-core workflow planner and safe launcher. "
             "Builds samplesheets, validates requirements, and writes a Nextflow command. "
-            "Default is dry-run — does not execute unless --run is explicitly provided."
+            "Default is dry-run - does not execute unless --run is explicitly provided."
         ),
     )
     parser.add_argument("--workflow", choices=SUPPORTED_WORKFLOWS, required=True,
@@ -525,7 +525,7 @@ def main():
     parser.add_argument("--profile", default="docker",
                         help="Nextflow executor profile (docker, singularity, conda, etc.)")
     parser.add_argument("--dry-run", action="store_true", default=True,
-                        help="Plan only — do not execute (default)")
+                        help="Plan only - do not execute (default)")
     parser.add_argument("--run", action="store_true", default=False,
                         help="Execute the workflow after preflight checks pass")
     parser.add_argument("--max-cpus", type=int, help="Override max CPUs")
@@ -586,7 +586,7 @@ def main():
         plan["missing_requirements"].append(
             f"nf-core/{args.workflow} requires either --genome (nf-core key) or --fasta (local FASTA)"
         )
-        warnings_list.append("No reference genome provided — command will be incomplete")
+        warnings_list.append("No reference genome provided - command will be incomplete")
 
     if args.genome:
         plan["references"]["genome_key"] = args.genome
@@ -648,7 +648,7 @@ def main():
     commands_path = out_dir / "commands.sh"
     with open(commands_path, "w") as fh:
         fh.write("#!/usr/bin/env bash\n")
-        fh.write(f"# nf-core/{args.workflow} — generated by {TOOL_NAME} v{VERSION}\n")
+        fh.write(f"# nf-core/{args.workflow} - generated by {TOOL_NAME} v{VERSION}\n")
         fh.write(f"# Generated: {datetime.now().isoformat()}\n")
         fh.write(f"# Mode: {'DRY RUN (not executed)' if args.dry_run else 'RUN'}\n")
         fh.write("#\n# Review all parameters, samplesheet, and references before running.\n\n")
@@ -685,7 +685,7 @@ def main():
 
     caveats = BIOLOGICAL_CAVEATS.get(args.workflow, [])
 
-    # pipeline_output may not exist on a dry run — parse_multiqc_output handles the missing dir
+    # pipeline_output may not exist on a dry run - parse_multiqc_output handles the missing dir
     pipeline_output = Path(args.output_dir) / "pipeline_output"
     multiqc_result = parse_multiqc_output(pipeline_output, log)
 
@@ -721,7 +721,7 @@ def main():
     if samplesheet_result.get("created"):
         print(f"  Samplesheet: {samplesheet_result['path']} ({samplesheet_result['rows']} rows)")
     else:
-        print(f"  Samplesheet: not created — {samplesheet_result.get('reason', 'unknown')}")
+        print(f"  Samplesheet: not created - {samplesheet_result.get('reason', 'unknown')}")
     print(f"  Blockers: {len(blockers)}  Warnings: {len(warnings_list)}")
     print(f"  commands.sh: {commands_path}")
     if blockers:

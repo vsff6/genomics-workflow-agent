@@ -1,5 +1,5 @@
 """
-wgs_vcf_qc_local.py — Local WGS/WES BAM/CRAM/VCF QC summarization.
+wgs_vcf_qc_local.py - Local WGS/WES BAM/CRAM/VCF QC summarization.
 
 Computes alignment and variant QC metrics. Uses pysam when available.
 Runs samtools flagstat/idxstats/stats when samtools is installed.
@@ -894,7 +894,7 @@ def main():
             else:
                 bcftools_metrics = {
                     "skipped": True,
-                    "reason": "bcftools not installed — local parser used only",
+                    "reason": "bcftools not installed - local parser used only",
                     "missing_biological_conclusion": (
                         "Cannot cross-validate variant counts, Ti/Tv, or indel rates with bcftools. "
                         "Local parser results are provided but not independently validated. "
@@ -984,7 +984,7 @@ def main():
         print(f"  Variants: {vcf_metrics.get('n_total')} (SNPs: {vcf_metrics.get('n_snps')}, Indels: {vcf_metrics.get('n_indels')})")
         print(f"  Ti/Tv: {vcf_metrics.get('ti_tv_ratio')}")
     if vcf_discrepancies:
-        print(f"  WARNING: {len(vcf_discrepancies)} local vs bcftools discrepancy(ies) — see JSON.")
+        print(f"  WARNING: {len(vcf_discrepancies)} local vs bcftools discrepancy(ies) - see JSON.")
     print(f"  samtools available: {has_samtools}  bcftools available: {has_bcftools}")
     print(f"  Skipped metrics: {len(skipped)}")
 

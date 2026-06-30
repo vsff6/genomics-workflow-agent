@@ -1,16 +1,4 @@
-"""
-Variant/WGS QC workflow — samtools, bcftools, mosdepth, and nf-core/sarek planning.
-
-Execution model:
-  plan()    → always dry-run; returns steps with expected_outputs
-  execute() → runs samtools/bcftools steps; sarek via Nextflow (dry-run by default unless --execute)
-
-External tools required:
-  samtools (flagstat, idxstats, stats)
-  bcftools (stats, index)
-  mosdepth (coverage, optional)
-  nextflow (for sarek, optional)
-"""
+"""Variant/WGS QC workflow - samtools, bcftools, mosdepth, and nf-core/sarek."""
 
 from __future__ import annotations
 
@@ -34,7 +22,7 @@ BIOLOGICAL_CAVEATS = [
     "Reference build and known-sites VCF compatibility must be verified for BQSR.",
     "Ti/Tv ratio expected values vary by capture kit, read length, variant caller, and genome region.",
     "Het/hom ratio is affected by ancestry, ploidy, copy number variation, and filtering stringency.",
-    "Coverage uniformity depends on library preparation, target capture, and GC content — not biology alone.",
+    "Coverage uniformity depends on library preparation, target capture, and GC content - not biology alone.",
     "Pathogenicity requires expert review with validated annotation sources (ClinVar, ACMG, expert panels).",
 ]
 
@@ -141,7 +129,7 @@ def plan(
                     "required_tools": ["mosdepth"],
                 })
         else:
-            warnings.append("mosdepth not found — coverage statistics skipped. Install: conda install -c bioconda mosdepth")
+            warnings.append("mosdepth not found - coverage statistics skipped. Install: conda install -c bioconda mosdepth")
 
     if vcf_files:
         if tools["bcftools"]["available"]:
@@ -174,7 +162,7 @@ def plan(
         pipeline_outdir = str(output_dir / "sarek_output")
 
         if not genome and not fasta:
-            warnings.append("No reference genome specified for sarek — command will be incomplete")
+            warnings.append("No reference genome specified for sarek - command will be incomplete")
 
         sarek_cmd = build_nextflow_cmd(
             "sarek",
@@ -193,11 +181,11 @@ def plan(
             "command": sarek_cmd,
             "command_str": " ".join(sarek_cmd),
             "pipeline_outdir": pipeline_outdir,
-            "note": "Sarek samplesheet requires manual review — PATIENT_ID, sex, status must be set manually",
+            "note": "Sarek samplesheet requires manual review - PATIENT_ID, sex, status must be set manually",
         }
 
         if not tools["nextflow"]["available"]:
-            blockers.append("nextflow not found — sarek cannot be executed")
+            blockers.append("nextflow not found - sarek cannot be executed")
 
     if not bam_files and not vcf_files and not fastq_files:
         warnings.append("No BAM, VCF, or FASTQ files detected in input directory")
@@ -220,7 +208,7 @@ def plan(
         "biological_caveats": BIOLOGICAL_CAVEATS,
         "clinical_disclaimer": DISCLAIMER,
         "next_actions": [
-            "Review sarek samplesheet — PATIENT_ID, sex, and status must be set manually",
+            "Review sarek samplesheet - PATIENT_ID, sex, and status must be set manually",
             "Confirm genome build and known-sites VCF for BQSR",
             "Ensure BAM files are sorted and indexed before running samtools",
             "After QC: review MultiQC output and invoke biology-interpretation-reviewer",
@@ -229,7 +217,7 @@ def plan(
         "limitations": [
             "No clinical claims are made from any output.",
             "Sarek samplesheet requires manual review before execution.",
-            "Coverage metrics from mosdepth are not parsed — review text outputs directly.",
+            "Coverage metrics from mosdepth are not parsed - review text outputs directly.",
         ],
     }
 
@@ -247,12 +235,7 @@ def execute(
     provenance_dir: Path | None = None,
     timeout: int = 3600,
 ) -> dict[str, Any]:
-    """
-    Execute variant QC steps (samtools/bcftools/mosdepth).
-
-    Sarek is planned but NOT executed here — use nextflow execute for that.
-    Returns annotated step records with status and output validation.
-    """
+    """Execute samtools/bcftools/mosdepth steps. Sarek is planned but not run here."""
     output_dir = Path(output_dir)
     qc_outdir = output_dir / "variant_qc"
 

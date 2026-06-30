@@ -67,7 +67,7 @@ List every assumption: reference source, batch covariate definitions, covariates
 - Biological validation suggestions (marker gene checks, known biology comparison)
 
 ## Biological reasoning requirements
-- Batch correction may remove cell-type composition differences between conditions — always check.
+- Batch correction may remove cell-type composition differences between conditions - always check.
 - Latent space distances do not directly represent biological distance.
 - Model uncertainty estimates should be reported when available.
 - Integration success must be evaluated with known biology, not just mixing metrics.

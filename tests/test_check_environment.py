@@ -89,7 +89,7 @@ class TestJsonOutput:
         for p in data["optional_packages"]:
             if p["status"] != "ok":
                 assert p["status"] == "warning", (
-                    f"Optional package {p['name']} has status {p['status']} — "
+                    f"Optional package {p['name']} has status {p['status']} - "
                     "missing optional packages must be 'warning', not 'MISSING' or 'FAIL'"
                 )
 
@@ -100,7 +100,7 @@ class TestJsonOutput:
         for t in data["external_tools"]:
             if t["status"] != "ok":
                 assert t["status"] == "warning", (
-                    f"CLI tool {t['name']} has status {t['status']} — "
+                    f"CLI tool {t['name']} has status {t['status']} - "
                     "missing CLI tools must be 'warning', not 'MISSING' or 'FAIL'"
                 )
 

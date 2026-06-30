@@ -1,0 +1,15 @@
+# This file was produced by bcftools stats
+# The command line was: bcftools stats sample1.vcf.gz
+#
+# SN, Summary numbers:
+#       id, key, value
+SN	0	number of samples:	1
+SN	0	number of records:	45678
+SN	0	number of no-ALTs:	0
+SN	0	number of SNPs:	38000
+SN	0	number of MNPs:	50
+SN	0	number of indels:	6000
+SN	0	number of others:	0
+SN	0	number of multiallelic sites:	200
+SN	0	number of multiallelic SNP sites:	150
+SN	0	Ts/Tv:	2.15

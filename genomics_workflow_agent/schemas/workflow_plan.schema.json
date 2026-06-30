@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WorkflowPlan",
+  "description": "Return value of plan_workflow(). Describes planned steps without executing anything.",
+  "type": "object",
+  "required": ["status", "workflow", "input_path", "outdir", "summary", "warnings", "errors", "paths", "provenance_paths"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["dry_run", "failed"],
+      "description": "Always dry_run on success; failed if input is invalid"
+    },
+    "workflow": {"type": "string"},
+    "input_path": {"type": "string"},
+    "outdir": {"type": "string"},
+    "summary": {
+      "type": "object",
+      "properties": {
+        "steps": {"type": "integer", "description": "Number of planned steps"},
+        "skipped_steps": {"type": "integer", "description": "Steps skipped due to missing tools"},
+        "blockers": {"type": "integer", "description": "Steps blocked by missing required dependencies"}
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "errors": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Blocker messages that would prevent execution"
+    },
+    "paths": {
+      "type": "object",
+      "properties": {
+        "plan_json": {"type": "string", "description": "Path to the written plan.json file"}
+      }
+    },
+    "provenance_paths": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "InspectionResult",
+  "description": "Return value of inspect_inputs(). Describes files found and the inferred workflow.",
+  "type": "object",
+  "required": ["status", "workflow", "input_path", "outdir", "summary", "warnings", "errors", "paths", "provenance_paths"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "partial", "failed", "dry_run"],
+      "description": "success if inspection completed without errors"
+    },
+    "workflow": {"type": "string", "const": "inspect"},
+    "input_path": {"type": "string"},
+    "outdir": {"type": "string"},
+    "summary": {
+      "type": "object",
+      "description": "Raw inspection result from inspector.py",
+      "properties": {
+        "input_path": {"type": "string"},
+        "total_files": {"type": "integer"},
+        "total_size_mb": {"type": "number"},
+        "file_type_counts": {"type": "object"},
+        "workflow_guess": {"type": "string"},
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "size_mb": {"type": "number"},
+              "type": {"type": "string"}
+            }
+          }
+        },
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "paths": {"type": "object"},
+    "provenance_paths": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -305,10 +305,15 @@ class TestAgentState:
 
 class TestFastqAgent:
     def test_dry_run_does_not_call_subprocess(self, fastq_dir, tmp_dir):
-        with patch("subprocess.run") as mock_sub:
-            from genomics_workflow_agent.agent.fastq_agent import run_fastq_agent
-            state = run_fastq_agent(fastq_dir, tmp_dir / "out", execute=False)
-            mock_sub.assert_not_called()
+        fake_tools = {t: {"available": False, "version": None}
+                      for t in ["fastqc", "multiqc", "fastp", "cutadapt",
+                                "nextflow", "docker", "singularity", "conda"]}
+        with patch("genomics_workflow_agent.workflows.fastq_qc.check_tools",
+                   return_value=fake_tools):
+            with patch("subprocess.run") as mock_sub:
+                from genomics_workflow_agent.agent.fastq_agent import run_fastq_agent
+                state = run_fastq_agent(fastq_dir, tmp_dir / "out", execute=False)
+                mock_sub.assert_not_called()
 
         assert state.workflow == "fastq-qc"
         assert any("dry-run" in w.lower() or "dry run" in w.lower() for w in state.warnings)
@@ -484,13 +489,18 @@ class TestCLIAgentCommand:
         assert "agent" in sub_parsers_action._name_parser_map
 
     def test_cli_agent_dry_run_no_subprocess(self, fastq_dir, tmp_dir):
-        with patch("subprocess.run") as mock_sub:
-            from genomics_workflow_agent.cli import main
-            sys.argv = [
-                "genomics_workflow_agent", "agent",
-                "--input", str(fastq_dir),
-                "--out", str(tmp_dir / "out"),
-            ]
-            result = main()
-            mock_sub.assert_not_called()
+        fake_tools = {t: {"available": False, "version": None}
+                      for t in ["fastqc", "multiqc", "fastp", "cutadapt",
+                                "nextflow", "docker", "singularity", "conda"]}
+        with patch("genomics_workflow_agent.workflows.fastq_qc.check_tools",
+                   return_value=fake_tools):
+            with patch("subprocess.run") as mock_sub:
+                from genomics_workflow_agent.cli import main
+                sys.argv = [
+                    "genomics_workflow_agent", "agent",
+                    "--input", str(fastq_dir),
+                    "--out", str(tmp_dir / "out"),
+                ]
+                result = main()
+                mock_sub.assert_not_called()
         assert result == 0

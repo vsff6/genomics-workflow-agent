@@ -1,5 +1,5 @@
 """
-test_external_tools.py — Parser-level and integration tests for external tool support.
+test_external_tools.py - Parser-level and integration tests for external tool support.
 
 Tests do NOT require samtools, bcftools, or bedtools to be installed.
 They test:
@@ -157,7 +157,7 @@ class TestParseBcftoolsStats:
 
 
 # ──────────────────────────────────────────────────────────
-# compare_vcf_stats — discrepancy detection
+# compare_vcf_stats - discrepancy detection
 # ──────────────────────────────────────────────────────────
 
 class TestCompareVcfStats:

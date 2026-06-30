@@ -1,0 +1,3 @@
+this is not a valid flagstat file
+hello world
+no numbers here

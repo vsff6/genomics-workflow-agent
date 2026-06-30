@@ -9,7 +9,7 @@ Wrapper for downstream single-cell modeling. Prefers `scvi-tools@life-sciences`.
 - Multiple batches or modalities are present.
 
 ## Official tool to prefer
-`scvi-tools@life-sciences` — for scVI, scANVI, totalVI, PeakVI, MultiVI workflows.
+`scvi-tools@life-sciences` - for scVI, scANVI, totalVI, PeakVI, MultiVI workflows.
 
 ## Required inputs
 - Filtered `.h5ad` (QC complete)

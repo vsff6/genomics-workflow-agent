@@ -2,11 +2,11 @@
 
 ## What this project is
 
-A reproducible Claude Code workspace for genomics QC orchestration. It demonstrates how to integrate an LLM safely into bioinformatics workflows — handling the surrounding engineering concerns that production pipelines leave to the analyst.
+A reproducible Claude Code workspace for genomics QC orchestration. It demonstrates how to integrate an LLM safely into bioinformatics workflows - handling the surrounding engineering concerns that production pipelines leave to the analyst.
 
 ## What it is not
 
-This project does not reimplement samtools, bcftools, bedtools, Scanpy, nf-core, or the Anthropic Life Sciences skill suite. Those tools exist and are good. The local tools here are fallbacks and wrappers — used when official tools are unavailable or when structured provenance is needed.
+This project does not reimplement samtools, bcftools, bedtools, Scanpy, nf-core, or the Anthropic Life Sciences skill suite. Those tools exist and are good. The local tools here are fallbacks and wrappers - used when official tools are unavailable or when structured provenance is needed.
 
 ## The problems this project addresses
 
@@ -14,7 +14,7 @@ This project does not reimplement samtools, bcftools, bedtools, Scanpy, nf-core,
 Claude Code cannot safely read a 50 GB BAM or 1 M-cell h5ad file into model context. This workspace enforces a strict rule: inspect metadata, route to the right tool, never paste raw data into the model.
 
 **2. Graceful degradation**
-In a research environment, not every compute node has samtools installed. Every tool here detects what is available and produces structured skip entries for unavailable metrics — with `missing_biological_conclusion` and `enable_with` fields — rather than silently failing or producing incomplete results.
+In a research environment, not every compute node has samtools installed. Every tool here detects what is available and produces structured skip entries for unavailable metrics - with `missing_biological_conclusion` and `enable_with` fields - rather than silently failing or producing incomplete results.
 
 **3. Provenance tracking**
 External tool outputs (samtools flagstat, bcftools stats, bedtools intersect) are captured as structured JSON with command string, return code, stderr snippet, and tool version. This ensures reproducibility even when the same analysis is repeated later.
@@ -30,7 +30,7 @@ WGS tools include a mandatory clinical disclaimer and are tested to ensure no cl
 ```
 Claude Code (orchestrator)
   │
-  ├── .claude/agents/           — Specialist agents with enforced constraints
+  ├── .claude/agents/           - Specialist agents with enforced constraints
   │     ├── genomics-file-inspector
   │     ├── scrna-qc-specialist (official-skill-first)
   │     ├── atac-qc-specialist
@@ -39,17 +39,17 @@ Claude Code (orchestrator)
   │     ├── biology-interpretation-reviewer
   │     └── single-cell-modeling-specialist
   │
-  ├── .claude/skills/           — Skill wrappers that route to agents or tools
+  ├── .claude/skills/           - Skill wrappers that route to agents or tools
   │
-  ├── tools/                    — Local CLI tools (fallback and orchestration layer)
-  │     ├── check_environment.py    — Pre-flight check
-  │     ├── inspect_file.py         — File type detection and routing
-  │     ├── scrna_qc_local.py       — scRNA QC (CSV/TSV fallback)
-  │     ├── atac_qc_local.py        — ATAC QC + bedtools integration
-  │     ├── wgs_vcf_qc_local.py     — WGS/VCF QC + samtools/bcftools
-  │     ├── nfcore_launcher.py      — nf-core samplesheet builder, preflight, safe launcher
-  │     ├── reference_validator.py  — Reference file validation
-  │     └── report_builder.py       — Report assembly
+  ├── tools/                    - Local CLI tools (fallback and orchestration layer)
+  │     ├── check_environment.py    - Pre-flight check
+  │     ├── inspect_file.py         - File type detection and routing
+  │     ├── scrna_qc_local.py       - scRNA QC (CSV/TSV fallback)
+  │     ├── atac_qc_local.py        - ATAC QC + bedtools integration
+  │     ├── wgs_vcf_qc_local.py     - WGS/VCF QC + samtools/bcftools
+  │     ├── nfcore_launcher.py      - nf-core samplesheet builder, preflight, safe launcher
+  │     ├── reference_validator.py  - Reference file validation
+  │     └── report_builder.py       - Report assembly
   │
   └── Official Anthropic Life Sciences skills (preferred)
         single-cell-rna-qc@life-sciences

@@ -530,7 +530,7 @@ class TestVariantQcWorkflow:
         result = plan(empty, tmp_dir / "out")
         caveats_text = " ".join(result["biological_caveats"])
         # Caveats may mention "pathogenicity" in the context of NOT making claims
-        # The guardrail only applies to direct assertions — caveats explicitly deny claims
+        # The guardrail only applies to direct assertions - caveats explicitly deny claims
         assert "must not be used for medical decisions" in caveats_text
 
 

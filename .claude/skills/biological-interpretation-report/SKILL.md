@@ -1,7 +1,7 @@
 # Skill: biological-interpretation-report
 
 ## Purpose
-Produces a final biological interpretation section for any genomics analysis. Reviews outputs from official skills, nf-core workflows, and local QC scripts. Produces the standard artifact-versus-biology table. Lists limitations and next analyses. This skill is mandatory — never skip biological interpretation.
+Produces a final biological interpretation section for any genomics analysis. Reviews outputs from official skills, nf-core workflows, and local QC scripts. Produces the standard artifact-versus-biology table. Lists limitations and next analyses. This skill is mandatory - never skip biological interpretation.
 
 ## When to use
 - After any QC run, pipeline, or analysis step.
@@ -9,7 +9,7 @@ Produces a final biological interpretation section for any genomics analysis. Re
 - When any QC observation, filter, or threshold is proposed.
 
 ## Official tool to prefer
-`pubmed@life-sciences` — for biological background, marker interpretation, and tissue/disease biology. Use only when evidence is directly relevant to the species, tissue, assay, and condition. Do not use PubMed to justify arbitrary thresholds.
+`pubmed@life-sciences` - for biological background, marker interpretation, and tissue/disease biology. Use only when evidence is directly relevant to the species, tissue, assay, and condition. Do not use PubMed to justify arbitrary thresholds.
 
 ## Required inputs
 - QC output directory (JSON summaries, metrics CSVs, Markdown sections)
@@ -29,8 +29,8 @@ Produces a final biological interpretation section for any genomics analysis. Re
 4. **Build standard table** (see below).
 5. **Write plausibility notes** per observation.
 6. **List validation suggestions** for ambiguous observations.
-7. **List limitations** — what cannot be determined.
-8. **List next analyses** — what would resolve ambiguities.
+7. **List limitations** - what cannot be determined.
+8. **List next analyses** - what would resolve ambiguities.
 9. **Assemble report section** and pass to `report_builder.py`.
 
 ## Standard artifact-versus-biology table
@@ -39,9 +39,9 @@ Produces a final biological interpretation section for any genomics analysis. Re
 |-------------|-------------------------------|--------------------------------|------------------------------|-----------------------------|-----------------------|------------|
 
 Confidence scale:
-- `low` — weak or ambiguous evidence
-- `moderate` — some support, alternatives remain plausible
-- `high` — strong specific evidence; use sparingly
+- `low` - weak or ambiguous evidence
+- `moderate` - some support, alternatives remain plausible
+- `high` - strong specific evidence; use sparingly
 
 ## Expected outputs
 - Artifact-versus-biology table (Markdown)

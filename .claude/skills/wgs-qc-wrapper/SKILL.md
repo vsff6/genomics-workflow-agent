@@ -9,7 +9,7 @@ Wrapper for WGS/WES BAM/CRAM/VCF QC. For full pipeline orchestration, prefers `n
 - Before variant interpretation or population analysis.
 
 ## Official tool to prefer
-`nextflow-development@life-sciences` with `nf-core/sarek` — for full WGS/WES pipeline (alignment, BQSR, variant calling). Use when Nextflow + Docker/Singularity are available and user needs the full pipeline.
+`nextflow-development@life-sciences` with `nf-core/sarek` - for full WGS/WES pipeline (alignment, BQSR, variant calling). Use when Nextflow + Docker/Singularity are available and user needs the full pipeline.
 
 ## Required inputs
 - BAM or CRAM (for alignment QC) OR VCF (for variant QC)

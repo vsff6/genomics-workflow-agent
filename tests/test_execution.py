@@ -634,15 +634,20 @@ class TestCLIExecuteFlag:
 
     def test_cli_plan_always_dry_run(self, fastq_dir, tmp_dir):
         from genomics_workflow_agent.cli import main
+        fake_tools = {t: {"available": False, "version": None}
+                      for t in ["fastqc", "multiqc", "fastp", "cutadapt",
+                                "nextflow", "docker", "singularity", "conda"]}
         sys.argv = [
             "genomics_workflow_agent", "plan",
             "--input", str(fastq_dir),
             "--workflow", "fastq-qc",
             "--out", str(tmp_dir / "out"),
         ]
-        with patch("subprocess.run") as mock_sub:
-            result = main()
-            mock_sub.assert_not_called()
+        with patch("genomics_workflow_agent.workflows.fastq_qc.check_tools",
+                   return_value=fake_tools):
+            with patch("subprocess.run") as mock_sub:
+                result = main()
+                mock_sub.assert_not_called()
         assert result == 0
 
 
@@ -788,7 +793,7 @@ class TestNextflowIntegration:
     def test_nextflow_help_does_not_crash(self, tmp_dir):
         from genomics_workflow_agent.tools.runner import run_command
         record = run_command(
-            ["nextflow", "--version"],
+            ["nextflow", "-version"],
             dry_run=False,
             label="integration_nextflow_version",
         )

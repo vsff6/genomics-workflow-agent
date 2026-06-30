@@ -1,0 +1,4 @@
+# This file has no SN lines
+# Just a header and some garbage
+hello
+world
