@@ -6,6 +6,48 @@ from pathlib import Path
 from typing import Any
 
 
+def generate_interpretation(
+    workflow: str,
+    observations: list[dict] | None = None,
+    decisions: list[dict] | None = None,
+    run_result: dict | None = None,
+    metadata: dict | None = None,
+) -> dict[str, Any]:
+    """
+    Generate a deterministic biological interpretation scaffold from QC observations.
+
+    No LLM is called. Returns a JSON-serializable dict conforming to
+    genomics_workflow_agent/schemas/interpretation_result.schema.json.
+
+    Args:
+        workflow: "fastq-qc" or "variant-qc".
+        observations: List of observation dicts from an agent run.
+        decisions: List of decision dicts from an agent run.
+        run_result: Optional full agent run result dict (used to extract obs/dec if not provided).
+        metadata: Optional sample/experiment metadata for future use.
+
+    Returns:
+        Interpretation result dict.
+    """
+    from genomics_workflow_agent.interpretation.hypothesis_generator import generate_interpretation as _gen
+
+    obs = observations or []
+    dec = decisions or []
+
+    if run_result and not obs:
+        obs = run_result.get("observations", [])
+    if run_result and not dec:
+        dec = run_result.get("decisions", [])
+
+    return _gen(
+        workflow=workflow,
+        observations=obs,
+        decisions=dec,
+        run_result=run_result,
+        metadata=metadata,
+    )
+
+
 def inspect_inputs(
     input_path: str | Path,
     max_file_mb: float = 50.0,

@@ -2,10 +2,6 @@
 
 > Orchestrate reproducible NGS pipelines - inspect, plan, and execute genomics workflows with biological reasoning guardrails.
 
-[![Tests](https://github.com/vfferreira/genomics-agent-workspace/actions/workflows/tests.yml/badge.svg)](https://github.com/vfferreira/genomics-agent-workspace/actions/workflows/tests.yml)
-
----
-
 ## What makes it agentic?
 
 Two workflows have a real observation-decision-action loop. No LLM is called at runtime. All decisions are deterministic rules applied to parsed QC output.
@@ -537,6 +533,102 @@ Integration tests that require external tools (FastQC, MultiQC, fastp, samtools,
 
 ---
 
+## Biological interpretation and hypothesis generation
+
+The framework includes a **deterministic interpretation scaffold** that converts
+QC observations into structured findings and testable hypotheses.
+
+### What it is
+
+- Rule-based, not LLM-based. No language model is called at Python runtime.
+- Outputs are JSON-first: the Markdown report is a rendering of the structured JSON.
+- Every finding separates **technical artifact** from **plausible biological signal**.
+- All outputs are explicitly labelled as hypotheses for human review.
+- **No clinical claims are made.** `clinical_claims_allowed: false` is always present.
+
+### What it covers
+
+| Workflow | Observations interpreted |
+|----------|--------------------------|
+| `fastq-qc` | Adapter content, per-base quality, GC content, overrepresented sequences |
+| `variant-qc` | Mapping rate, VCF record count, contig coverage, mean depth |
+
+### CLI usage
+
+```bash
+# Generate interpretation from an existing agent report
+python -m genomics_workflow_agent interpret \
+  --input results_agent/agent_report.json \
+  --out results_agent/interpretation/
+
+# Output:
+#   interpretation_report.json
+#   interpretation_report.md
+```
+
+The `agent` command now automatically includes `biological_interpretation` in
+its JSON and Markdown reports. No additional flags needed.
+
+### Python API
+
+```python
+from genomics_workflow_agent import generate_interpretation
+
+result = generate_interpretation(
+    workflow="fastq-qc",
+    observations=[...],  # from run_fastq_qc_agent()
+    decisions=[...],
+)
+# result is a plain JSON-serializable dict
+print(result["clinical_claims_allowed"])  # False
+print(result["findings"][0]["should_filter"])  # False (GC content never auto-filtered)
+```
+
+### Example JSON output (fragment)
+
+```json
+{
+  "interpretation_version": "1.0",
+  "workflow": "fastq-qc",
+  "clinical_claims_allowed": false,
+  "findings": [
+    {
+      "finding_id": "FASTQ_GC_F001",
+      "sample": "sample_A",
+      "observation": "Per sequence GC content FAIL detected by FastQC.",
+      "technical_explanations": [
+        "PCR amplification bias can distort GC distribution.",
+        "Contamination from another species may shift the GC profile."
+      ],
+      "plausible_biological_explanations": [
+        "The sequenced organism may have a naturally GC-rich or GC-poor genome.",
+        "For metagenomics or environmental samples, community composition shifts the GC distribution."
+      ],
+      "recommended_action": "Do not filter samples based on GC content alone. Biological review required.",
+      "should_filter": false,
+      "should_preserve_until_review": true
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "FASTQ_GC_F001_H1",
+      "statement": "The GC-content deviation may reflect technical bias or a biologically distinct composition.",
+      "clinical_claim": false,
+      "interpretation_type": "ambiguous"
+    }
+  ]
+}
+```
+
+### Limitations
+
+- The Python layer does not consult literature or external databases.
+- Interpretations are scaffolds: they enumerate possibilities, not conclusions.
+- A Claude Code `hypothesis-generation-specialist` agent (`.claude/agents/`) can
+  be invoked separately to extend findings with scientific context.
+
+---
+
 ## Running the Demo
 
 ```bash
@@ -555,12 +647,18 @@ Human genomic data is treated as privacy-sensitive by default. Do not upload or 
 
 ## Future Work
 
-- Agentic interpretation for RNA-seq outputs (nf-core/rnaseq: mapping rate, strandedness, dedup rate)
-- Agentic interpretation for ATAC-seq outputs (peak counts, FRiP score, fragment size distribution)
-- Agentic interpretation for amplicon outputs (rarefaction, taxa assignment quality, alpha diversity flags)
+### Interpretation layer extensions
+- **RNA-seq**: map nf-core/rnaseq summary metrics (mapping rate, strandedness, dedup rate, gene-body coverage) to interpretation findings; flag strand-specific bias and rRNA contamination.
+- **ATAC-seq**: interpret peak counts, FRiP score, fragment size distribution (mono/di-nucleosomal), and TSS enrichment as technical or biological signals.
+- **Amplicon / metagenomics**: interpret rarefaction curves, taxa assignment quality, alpha-diversity flags, and chimera rates with community-context hypotheses.
+- **scRNA-seq**: extend the scrna-qc-specialist with interpretation scaffolds for doublet rate, ambient RNA, mitochondrial fraction, and per-cluster QC.
+- **Hypothesis ranking**: score hypotheses by prior probability given assay type and metadata, to surface the most likely explanation first.
+- **Literature links**: integrate PubMed search (via `pubmed@life-sciences`) to attach relevant references to biological explanations.
+
+### Pipeline and tooling
 - Direct QIIME2/DADA2 execution (currently generates Nextflow/nf-core commands only)
 - Richer MultiQC TSV parsing integrated into the FASTQ agent decision engine
-- HTML report export
+- HTML report export with interpretation section
 - Adaptive Nextflow decisions based on parsed pipeline completion outputs
 - Benchmark datasets and integration test fixtures for CI
 - R-based downstream workflow documentation (DESeq2, phyloseq)

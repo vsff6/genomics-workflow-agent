@@ -172,11 +172,18 @@ def _add_dry_run_observations(state: AgentState) -> None:
 
 
 def write_variant_agent_report_json(state: AgentState, out_path: str | Path) -> Path:
+    from genomics_workflow_agent.interpretation import generate_interpretation
+
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     payload = state.to_dict()
     payload["generated_at"] = datetime.now(timezone.utc).isoformat()
     payload["clinical_disclaimer"] = CLINICAL_DISCLAIMER
+    payload["biological_interpretation"] = generate_interpretation(
+        workflow="variant-qc",
+        observations=[o.to_dict() for o in state.observations],
+        decisions=[d.to_dict() for d in state.decisions],
+    )
     out_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
     return out_path
 
@@ -260,6 +267,17 @@ def write_variant_agent_report_md(state: AgentState, out_path: str | Path) -> Pa
         lines.append(f"- {lim}")
 
     lines.append(f"\n## Disclaimer\n\n> {CLINICAL_DISCLAIMER}\n")
+
+    # Biological interpretation section - rendered from structured JSON
+    from genomics_workflow_agent.interpretation import generate_interpretation, render_interpretation_md
+
+    interp = generate_interpretation(
+        workflow="variant-qc",
+        observations=[o.to_dict() for o in state.observations],
+        decisions=[d.to_dict() for d in state.decisions],
+    )
+    lines.append("\n---\n")
+    lines.append(render_interpretation_md(interp))
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
     return out_path

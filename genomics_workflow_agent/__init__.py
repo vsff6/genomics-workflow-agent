@@ -4,6 +4,7 @@ __version__ = "0.3.0"
 __author__ = "genomics-workflow-agent contributors"
 
 from genomics_workflow_agent.api import (
+    generate_interpretation,
     inspect_inputs,
     plan_workflow,
     run_fastq_qc_agent,
@@ -13,6 +14,7 @@ from genomics_workflow_agent.api import (
 )
 
 __all__ = [
+    "generate_interpretation",
     "inspect_inputs",
     "plan_workflow",
     "run_workflow",

@@ -236,6 +236,66 @@ def _print_plan_summary(plan: dict, json_path: Path, md_path: Path) -> None:
     print(f"  MD   : {md_path}")
 
 
+def cmd_interpret(args: argparse.Namespace) -> int:
+    from genomics_workflow_agent.interpretation import generate_interpretation, render_interpretation_md
+    from genomics_workflow_agent.reports.json_report import write_json_report
+
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f"[ERROR] Input file not found: {input_path}", file=sys.stderr)
+        return 1
+
+    try:
+        run_result = json.loads(input_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"[ERROR] Could not read {input_path}: {e}", file=sys.stderr)
+        return 1
+
+    # Infer workflow
+    workflow = getattr(args, "workflow", None) or run_result.get("workflow", "")
+    if not workflow:
+        print(
+            "[ERROR] Could not infer workflow from file. "
+            "Pass --workflow fastq-qc or --workflow variant-qc.",
+            file=sys.stderr,
+        )
+        return 1
+
+    obs = run_result.get("observations", [])
+    dec = run_result.get("decisions", [])
+
+    interp = generate_interpretation(
+        workflow=workflow,
+        observations=obs,
+        decisions=dec,
+        run_result=run_result,
+    )
+
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    json_path = out_dir / "interpretation_report.json"
+    json_path.write_text(json.dumps(interp, indent=2, default=str), encoding="utf-8")
+
+    md_path = out_dir / "interpretation_report.md"
+    md_content = "\n".join([
+        f"# Biological Interpretation Report",
+        f"\n**Source**: `{input_path}`",
+        f"\n**Workflow**: `{workflow}`",
+        "",
+        render_interpretation_md(interp),
+    ])
+    md_path.write_text(md_content, encoding="utf-8")
+
+    print(f"\n[INTERPRET] Workflow: {workflow}")
+    print(f"  Findings   : {len(interp.get('findings', []))}")
+    print(f"  Hypotheses : {len(interp.get('hypotheses', []))}")
+    print(f"\nOutputs:")
+    print(f"  JSON     : {json_path}")
+    print(f"  Markdown : {md_path}")
+    return 0
+
+
 def cmd_agent(args: argparse.Namespace) -> int:
     workflow = getattr(args, "workflow", "fastq-qc")
     out_dir = Path(args.out)
@@ -397,6 +457,17 @@ def build_parser() -> argparse.ArgumentParser:
     _add_common_args(p)
 
     p = sub.add_parser(
+        "interpret",
+        help="Generate biological interpretation scaffold from an existing agent_report.json",
+    )
+    p.add_argument("--input", "-i", required=True,
+                   help="Path to agent_report.json or variant_agent_report.json")
+    p.add_argument("--workflow", "-w", default=None,
+                   choices=["fastq-qc", "variant-qc"],
+                   help="Workflow type (inferred from report if omitted)")
+    _add_common_args(p)
+
+    p = sub.add_parser(
         "agent",
         help="Run the agentic FASTQ QC loop (observe, decide, act)",
     )
@@ -457,6 +528,7 @@ def main() -> int:
         "plan": cmd_plan,
         "run": cmd_run,
         "report": cmd_report,
+        "interpret": cmd_interpret,
         "agent": cmd_agent,
     }
 

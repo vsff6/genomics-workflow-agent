@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InterpretationResult",
+  "description": "Deterministic biological interpretation scaffold produced by the genomics workflow agent.",
+  "type": "object",
+  "required": [
+    "interpretation_version",
+    "workflow",
+    "scope",
+    "limitations",
+    "findings",
+    "hypotheses",
+    "validation_recommendations",
+    "safety_flags",
+    "clinical_claims_allowed"
+  ],
+  "properties": {
+    "interpretation_version": { "type": "string" },
+    "workflow": { "type": "string" },
+    "scope": { "type": "string" },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "clinical_claims_allowed": { "type": "boolean", "enum": [false] },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "finding_id", "workflow", "sample", "observation",
+          "evidence_source", "recommended_action", "confidence",
+          "should_filter", "should_preserve_until_review"
+        ],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "workflow": { "type": "string" },
+          "sample": { "type": "string" },
+          "observation": { "type": "string" },
+          "evidence_source": { "type": "string" },
+          "technical_explanations": { "type": "array", "items": { "type": "string" } },
+          "plausible_biological_explanations": { "type": "array", "items": { "type": "string" } },
+          "metadata_needed": { "type": "array", "items": { "type": "string" } },
+          "recommended_validation": { "type": "array", "items": { "type": "string" } },
+          "recommended_action": { "type": "string" },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "should_filter": { "type": "boolean" },
+          "should_preserve_until_review": { "type": "boolean" }
+        }
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "hypothesis_id", "statement", "confidence",
+          "interpretation_type", "clinical_claim"
+        ],
+        "properties": {
+          "hypothesis_id": { "type": "string" },
+          "statement": { "type": "string" },
+          "supporting_observations": { "type": "array", "items": { "type": "string" } },
+          "alternative_explanations": { "type": "array", "items": { "type": "string" } },
+          "validation_steps": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "interpretation_type": {
+            "type": "string",
+            "enum": ["technical", "biological", "ambiguous"]
+          },
+          "clinical_claim": { "type": "boolean", "enum": [false] }
+        }
+      }
+    },
+    "validation_recommendations": { "type": "array", "items": { "type": "string" } },
+    "safety_flags": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}
