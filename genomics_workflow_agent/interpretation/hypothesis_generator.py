@@ -780,7 +780,7 @@ def _rnaseq_high_intronic(obs_list: list[dict], finding_id: str, sample: str) ->
         observation="High intronic or intergenic mapping rate detected in RNA-seq library.",
         evidence_source=obs_to_evidence_source(obs_list[0]) if obs_list else "rnaseq:intronic_mapping",
         technical_explanations=[
-            "Genomic DNA (gDNA) contamination from missing or exhausted DNase treatment during RNA extraction.",
+            "Genomic DNA (gDNA) contamination from missing or exhausted DNase digestion during RNA extraction.",
             "Incomplete DNase I digestion leaving residual gDNA co-purified with the RNA fraction.",
             "Reference annotation incompleteness causing exonic reads to be misclassified as intronic.",
             "Aligner soft-clipping artefacts at exon-intron junctions inflating intronic counts.",
@@ -794,22 +794,22 @@ def _rnaseq_high_intronic(obs_list: list[dict], finding_id: str, sample: str) ->
             "post-transcriptional regulatory mechanisms.",
         ],
         metadata_needed=[
-            "Whether DNase treatment was applied and the DNase I concentration/incubation conditions.",
+            "Whether DNase digestion was applied and the DNase I concentration/incubation conditions.",
             "Library type (total RNA, poly-A, ribo-depleted, nuclear RNA fraction).",
             "Reference annotation version and completeness for the target organism.",
             "Proportion of intergenic vs. intronic reads to distinguish gDNA from nascent transcription.",
         ],
         recommended_validation=[
-            "Introduce or verify inline DNase treatment protocols and confirm complete DNA removal "
+            "Introduce or verify inline DNase digestion protocols and confirm complete DNA removal "
             "via gel or capillary electrophoresis of the RNA fraction.",
             "Inspect the ratio of intronic to intergenic reads: predominantly intronic may suggest "
             "intron retention, while predominantly intergenic suggests gDNA or annotation gaps.",
             "Evaluate using a specialized intron-retention analysis tool (e.g., IRFinder, rMATS) "
             "to distinguish regulated retention from technical noise.",
-            "Compare to samples prepared without DNase treatment as a positive control if available.",
+            "Compare to samples prepared without DNase digestion as a positive control if available.",
         ],
         recommended_action=(
-            "Investigate DNase treatment protocol before discarding the sample. "
+            "Investigate the DNase digestion protocol before discarding the sample. "
             "If gDNA contamination is confirmed, the sample may require re-preparation. "
             "If intron retention is the primary signal, preserve the sample and apply appropriate "
             "intron-retention analysis tools downstream."
@@ -823,18 +823,18 @@ def _rnaseq_high_intronic(obs_list: list[dict], finding_id: str, sample: str) ->
         hypothesis_id=f"{finding_id}_H1",
         statement=(
             "Elevated intronic or intergenic mapping suggests either unresolved genomic DNA presence "
-            "(technical: absent or insufficient DNase treatment) or extensive intron retention / "
+            "(technical: absent or insufficient DNase digestion) or extensive intron retention / "
             "unannotated transcriptional activity (biological: regulated intron retention, nascent "
             "pre-mRNA capture, or novel transcripts). These cannot be distinguished without "
             "additional protocol and annotation metadata."
         ),
         supporting_observations=obs_message_list(obs_list),
         alternative_explanations=[
-            "Technical: gDNA contamination from missing or exhausted DNase I treatment.",
+            "Technical: gDNA contamination from missing or exhausted DNase I digestion.",
             "Biological: regulated intron retention, nascent pre-mRNA, unannotated lncRNAs or enhancer RNAs.",
         ],
         validation_steps=[
-            "Confirm DNase treatment conditions from the extraction protocol record.",
+            "Confirm DNase digestion conditions from the extraction protocol record.",
             "Compute the intronic-to-intergenic read ratio to separate retention from gDNA signal.",
             "Run IRFinder or equivalent tool to quantify intron retention events at the gene level.",
         ],
@@ -942,7 +942,7 @@ def _rnaseq_all_pass(finding_id: str) -> Finding:
             "Batch effects, normalization choices, and annotation completeness require separate evaluation.",
         ],
         metadata_needed=[
-            "Downstream QC metrics (duplication rate, gene detection rate, normalization diagnostics) "
+            "Downstream QC metrics (duplication rate, gene detection rate, normalization metrics) "
             "for a complete assessment.",
         ],
         recommended_validation=[
@@ -1127,6 +1127,8 @@ def generate_interpretation(
         result = generate_fastq_interpretation(obs, dec)
     elif workflow == "variant-qc":
         result = generate_variant_interpretation(obs, dec)
+    elif workflow in ("rna-seq-qc", "rnaseq"):
+        result = generate_rnaseq_interpretation(obs, dec)
     else:
         result = InterpretationResult(
             interpretation_version=INTERPRETATION_VERSION,
@@ -1134,7 +1136,7 @@ def generate_interpretation(
             scope=f"Interpretation not yet implemented for workflow: {workflow}",
             limitations=[
                 f"The interpretation engine does not have rules for workflow '{workflow}'.",
-                "Only fastq-qc and variant-qc are currently supported.",
+                "Supported workflows: fastq-qc, variant-qc, rna-seq-qc.",
             ],
             findings=[],
             hypotheses=[],

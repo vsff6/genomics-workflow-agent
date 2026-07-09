@@ -463,7 +463,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--input", "-i", required=True,
                    help="Path to agent_report.json or variant_agent_report.json")
     p.add_argument("--workflow", "-w", default=None,
-                   choices=["fastq-qc", "variant-qc"],
+                   choices=["fastq-qc", "variant-qc", "rna-seq-qc", "rnaseq"],
                    help="Workflow type (inferred from report if omitted)")
     _add_common_args(p)
 
